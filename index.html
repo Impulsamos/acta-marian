@@ -778,6 +778,8 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     formTitle: "ACTA DE VISITA TÉCNICA",
     submissionDate: ahora,
     pretty: buildPretty(),
+    // Campo pretty en formato JotForm para compatibilidad con N8N workflow
+    "body.pretty": buildPretty(),
     // Campos con los mismos nombres que usa N8N
     q59_nombreDel: document.getElementById('cardId').value,
     q78_nombreDel78: document.getElementById('nombreAsegurado').value,
@@ -802,6 +804,26 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     garantia: '',
     username: "asesoria_impulsamos",
     source: "google_form_replica"
+  };
+
+  // Payload para N8N — estructura compatible con JotForm (body.pretty)
+  const n8nPayload = {
+    body: {
+      pretty: buildPretty(),
+      rawRequest: JSON.stringify(payload),
+      q59_nombreDel: payload.q59_nombreDel,
+      q78_nombreDel78: payload.q78_nombreDel78,
+      q57_dni: payload.q57_dni,
+      q54_fechaDe: payload.q54_fechaDe,
+      q67_escribaUna: payload.q67_escribaUna,
+      q71_tecnico: payload.q71_tecnico,
+      q79_tecnico79: payload.q79_tecnico79,
+      q73_firma73: payload.q73_firma73,
+      q70_cliente70: payload.q70_cliente70,
+      telefono: payload.telefono,
+      username: "asesoria_impulsamos",
+      source: "html_form"
+    }
   };
 
   // URLs de destino
@@ -830,7 +852,7 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     fetch(N8N_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(n8nPayload)
     })
   ]);
 
