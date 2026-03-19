@@ -38,7 +38,6 @@
     margin: 0 auto;
   }
 
-  /* HEADER */
   .form-header {
     background: var(--navy);
     border-radius: var(--radius) var(--radius) 0 0;
@@ -84,7 +83,6 @@
     margin-top: 3px;
   }
 
-  /* SECTION CARDS */
   .section-card {
     background: var(--white);
     margin-top: 12px;
@@ -134,7 +132,6 @@
     gap: 20px;
   }
 
-  /* FIELDS */
   .field-group {
     display: flex;
     flex-direction: column;
@@ -200,14 +197,12 @@
     padding-right: 36px;
   }
 
-  /* DATE TIME ROW */
   .datetime-row {
     display: flex;
     gap: 12px;
   }
   .datetime-row > * { flex: 1; }
 
-  /* ELECTRODOMESTICO TABLE */
   .equipo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -220,7 +215,6 @@
     .datetime-row { flex-direction: column; }
   }
 
-  /* FOTO UPLOAD */
   .upload-area {
     border: 2px dashed var(--orange-mid);
     border-radius: 10px;
@@ -276,7 +270,6 @@
     border: 2px solid var(--orange-mid);
   }
 
-  /* FIRMA */
   .firma-container {
     border: 1.5px solid var(--border);
     border-radius: 10px;
@@ -320,7 +313,6 @@
     touch-action: none;
   }
 
-  /* RADIO YES/NO */
   .yesno-group {
     display: flex;
     gap: 12px;
@@ -363,7 +355,6 @@
     background: var(--orange);
   }
 
-  /* NOTA INFO */
   .info-note {
     background: var(--blue-light);
     border-left: 3px solid var(--navy-mid);
@@ -373,7 +364,6 @@
     color: var(--navy-mid);
   }
 
-  /* SUBMIT */
   .submit-area {
     margin-top: 16px;
     display: flex;
@@ -399,7 +389,6 @@
   .btn-submit:hover { background: #C93D00; transform: translateY(-1px); }
   .btn-submit:active { transform: translateY(0); }
 
-  /* SUCCESS */
   .success-overlay {
     display: none;
     position: fixed;
@@ -464,10 +453,8 @@
 
   .btn-nuevo:hover { background: var(--navy-mid); }
 
-  /* SPINNER */
   .btn-submit.loading { opacity: 0.7; pointer-events: none; }
 
-  /* HIDDEN */
   .hidden { display: none !important; }
 </style>
 </head>
@@ -475,7 +462,6 @@
 
 <div class="form-wrapper">
 
-  <!-- HEADER -->
   <div class="form-header">
     <div class="header-accent"></div>
     <div class="header-content">
@@ -489,7 +475,6 @@
 
   <form id="mainForm" novalidate>
 
-    <!-- SECCIÓN 1: DATOS DE LA VISITA -->
     <div class="section-card" style="border-radius:0 0 12px 12px; margin-top:0;">
       <div class="section-header">
         <div class="section-icon">📋</div>
@@ -521,7 +506,6 @@
       </div>
     </div>
 
-    <!-- SECCIÓN 2: DATOS DEL ELECTRODOMÉSTICO -->
     <div class="section-card">
       <div class="section-header">
         <div class="section-icon">🏠</div>
@@ -588,7 +572,6 @@
       </div>
     </div>
 
-    <!-- SECCIÓN 3: DATOS DEL TÉCNICO -->
     <div class="section-card">
       <div class="section-header">
         <div class="section-icon">👷</div>
@@ -643,7 +626,6 @@
   </form>
 </div>
 
-<!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-card">
     <div class="success-icon">✅</div>
@@ -658,7 +640,6 @@
 function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
-  // Ajustar resolución
   const rect = canvas.getBoundingClientRect();
   canvas.width = rect.width * window.devicePixelRatio || 620;
   canvas.height = 140 * window.devicePixelRatio || 140;
@@ -721,13 +702,6 @@ document.getElementById('averia').addEventListener('change', function() {
   document.getElementById('averiaOtrosGroup').style.display = this.value === 'Otros' ? '' : 'none';
 });
 
-// ─── FINALIZADO S/N ───────────────────────────────────────────────────────────
-function selectFinalizado(val) {
-  document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('opt-' + val).classList.add('selected');
-  document.getElementById('motivoGroup').classList.toggle('hidden', val !== 'no');
-}
-
 // ─── FOTOS PREVIEW ────────────────────────────────────────────────────────────
 function previewFotos(input) {
   const container = document.getElementById('previewContainer');
@@ -744,11 +718,23 @@ function previewFotos(input) {
   });
 }
 
+// ─── CONVERTIR FOTOS A BASE64 ─────────────────────────────────────────────────
+function filesToBase64(files) {
+  return Promise.all(
+    Array.from(files).slice(0, 10).map(file =>
+      new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      })
+    )
+  );
+}
+
 // ─── SUBMIT → N8N WEBHOOK ─────────────────────────────────────────────────────
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  // Validación básica
   const required = ['cardId','nombreAsegurado','dni','electrodomestico','diagnostico','tecnicoNombre','tecnicoEmail'];
   let valid = true;
   required.forEach(id => {
@@ -770,17 +756,19 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   btn.textContent = 'Enviando...';
   btn.classList.add('loading');
 
-  // Hora actual para timestamp
   const ahora = new Date().toISOString();
 
-  // Construir payload igual a JotForm (mismos nombres de campo que espera N8N)
+  // Convertir fotos a base64 ANTES de construir el payload
+  const fotosInput = document.getElementById('fotosEquipo');
+  const fotosBase64 = fotosInput.files.length > 0
+    ? await filesToBase64(fotosInput.files)
+    : [];
+
   const payload = {
     formTitle: "ACTA DE VISITA TÉCNICA",
     submissionDate: ahora,
     pretty: buildPretty(),
-    // Campo pretty en formato JotForm para compatibilidad con N8N workflow
     "body.pretty": buildPretty(),
-    // Campos con los mismos nombres que usa N8N
     q59_nombreDel: document.getElementById('cardId').value,
     q78_nombreDel78: document.getElementById('nombreAsegurado').value,
     q57_dni: document.getElementById('dni').value,
@@ -798,15 +786,15 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     q79_tecnico79: document.getElementById('tecnicoEmail').value,
     q73_firma73: getSignatureData('firmaTecnico') || '',
     q70_cliente70: getSignatureData('firmaCliente') || '',
+    fotosEquipo: fotosBase64,
     q75_alarma: '',
     q76_comentario: '',
     telefono: document.getElementById('telefono').value,
     garantia: '',
     username: "asesoria_impulsamos",
-    source: "google_form_replica"
+    source: "html_form"
   };
 
-  // Payload para N8N — estructura compatible con JotForm (body.pretty)
   const n8nPayload = {
     body: {
       pretty: buildPretty(),
@@ -820,17 +808,16 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
       q79_tecnico79: payload.q79_tecnico79,
       q73_firma73: payload.q73_firma73,
       q70_cliente70: payload.q70_cliente70,
+      fotosEquipo: fotosBase64,
       telefono: payload.telefono,
       username: "asesoria_impulsamos",
       source: "html_form"
     }
   };
 
-  // URLs de destino
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzrKFjE6LNEOeON-sPG2_MridCXEz3TWnhuQUcJCkWHB_FKUhExb0ELAHTHTMYk6eBX/exec';
   const N8N_URL    = 'https://n8n.srv1077755.hstgr.cloud/webhook/0f0c12cb-8cb0-4d74-b849-1ae9a59e33dd';
 
-  // Payload extra para Sheets con nombres legibles
   const sheetsPayload = {
     ...payload,
     electrodomestico: document.getElementById('electrodomestico').value,
@@ -842,11 +829,10 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     diagnostico:      document.getElementById('diagnostico').value,
   };
 
-  // Enviar a ambos destinos en paralelo — uno no bloquea al otro
   const [sheetsResult, n8nResult] = await Promise.allSettled([
     fetch(SHEETS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // requerido por Apps Script sin CORS preflight
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(sheetsPayload)
     }),
     fetch(N8N_URL, {
@@ -856,11 +842,9 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     })
   ]);
 
-  // Log para debug
   console.log('Sheets:', sheetsResult.status, sheetsResult.value?.status ?? sheetsResult.reason);
   console.log('N8N:',    n8nResult.status,    n8nResult.value?.status    ?? n8nResult.reason);
 
-  // Mostrar confirmación siempre — al menos uno de los dos habrá recibido los datos
   document.getElementById('successOverlay').classList.add('show');
   btn.textContent = 'Enviar Acta';
   btn.classList.remove('loading');
@@ -887,12 +871,9 @@ function resetForm() {
   clearCanvas('firmaCliente');
   document.getElementById('previewContainer').innerHTML = '';
   document.getElementById('successOverlay').classList.remove('show');
-  document.querySelectorAll('.radio-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById('motivoGroup').classList.add('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Ajustar canvas al resize
 window.addEventListener('resize', () => {
   ['firmaTecnico', 'firmaCliente'].forEach(id => initCanvas(id));
 });
