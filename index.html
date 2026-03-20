@@ -238,6 +238,7 @@
     cursor: pointer;
     width: 100%;
     height: 100%;
+    z-index: 2;
   }
 
   .upload-icon { font-size: 28px; margin-bottom: 8px; }
@@ -255,11 +256,28 @@
     display: block;
   }
 
+  .upload-contador {
+    display: inline-block;
+    margin-top: 8px;
+    background: var(--orange);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
   .upload-preview {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 12px;
+  }
+
+  .preview-item {
+    position: relative;
+    width: 72px;
+    height: 72px;
   }
 
   .preview-thumb {
@@ -268,6 +286,32 @@
     border-radius: 8px;
     object-fit: cover;
     border: 2px solid var(--orange-mid);
+    display: block;
+  }
+
+  .preview-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 3;
+  }
+
+  .upload-area.tiene-fotos {
+    border-color: var(--orange);
+    background: #FFE8DA;
   }
 
   .firma-container {
@@ -565,6 +609,7 @@
             <div class="upload-icon">📷</div>
             <p>Añadir y subir archivos</p>
             <span>JPG, PNG · Máximo 10 archivos</span>
+            <span id="uploadContador" class="upload-contador" style="display:none">0 foto(s) seleccionada(s)</span>
           </div>
           <div class="upload-preview" id="previewContainer"></div>
         </div>
@@ -703,32 +748,72 @@ document.getElementById('averia').addEventListener('change', function() {
 });
 
 // ─── FOTOS: PREVIEW + ALMACENAMIENTO BASE64 ───────────────────────────────────
+let fotosSeleccionadas = []; // array global para manejar fotos
+
 function previewFotos(input) {
-  const container = document.getElementById('previewContainer');
-  container.innerHTML = '';
-  Array.from(input.files).slice(0, 10).forEach(file => {
+  const nuevos = Array.from(input.files).slice(0, 10 - fotosSeleccionadas.length);
+
+  nuevos.forEach(file => {
+    if (fotosSeleccionadas.length >= 10) return;
     const reader = new FileReader();
     reader.onload = e => {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className = 'preview-thumb';
-      container.appendChild(img);
+      fotosSeleccionadas.push({ file: file, base64: e.target.result });
+      renderizarPreview();
     };
     reader.readAsDataURL(file);
   });
+
+  // Limpiar el input para permitir seleccionar más fotos después
+  input.value = '';
+}
+
+function renderizarPreview() {
+  const container = document.getElementById('previewContainer');
+  const contador  = document.getElementById('uploadContador');
+  const area      = document.getElementById('uploadArea');
+
+  container.innerHTML = '';
+
+  fotosSeleccionadas.forEach((item, idx) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'preview-item';
+
+    const img = document.createElement('img');
+    img.src = item.base64;
+    img.className = 'preview-thumb';
+    img.title = item.file.name;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'preview-remove';
+    btn.textContent = '×';
+    btn.title = 'Eliminar foto';
+    btn.onclick = () => {
+      fotosSeleccionadas.splice(idx, 1);
+      renderizarPreview();
+    };
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(btn);
+    container.appendChild(wrapper);
+  });
+
+  // Actualizar contador
+  const total = fotosSeleccionadas.length;
+  if (total > 0) {
+    contador.style.display = 'inline-block';
+    contador.textContent = `${total} foto${total > 1 ? 's' : ''} seleccionada${total > 1 ? 's' : ''}`;
+    area.classList.add('tiene-fotos');
+  } else {
+    contador.style.display = 'none';
+    area.classList.remove('tiene-fotos');
+  }
 }
 
 // ─── CONVERTIR FOTOS A BASE64 PARA EL ENVÍO ──────────────────────────────────
 function filesToBase64(files) {
-  return Promise.all(
-    Array.from(files).slice(0, 10).map(file =>
-      new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      })
-    )
-  );
+  // Usar el array global fotosSeleccionadas que ya tiene los base64
+  return Promise.resolve(fotosSeleccionadas.map(item => item.base64));
 }
 
 // ─── SUBMIT → N8N WEBHOOK ─────────────────────────────────────────────────────
@@ -760,9 +845,8 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   const ahora = new Date().toISOString();
 
   // ── Convertir fotos a base64 ANTES de construir el payload ──────────────────
-  const fotosInput = document.getElementById('fotosEquipo');
-  const fotosBase64 = fotosInput.files.length > 0
-    ? await filesToBase64(fotosInput.files)
+  const fotosBase64 = fotosSeleccionadas.length > 0
+    ? await filesToBase64()
     : [];
 
   // ── Payload completo ─────────────────────────────────────────────────────────
@@ -873,7 +957,8 @@ function resetForm() {
   document.getElementById('mainForm').reset();
   clearCanvas('firmaTecnico');
   clearCanvas('firmaCliente');
-  document.getElementById('previewContainer').innerHTML = '';
+  fotosSeleccionadas = [];
+  renderizarPreview();
   document.getElementById('successOverlay').classList.remove('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
