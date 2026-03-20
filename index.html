@@ -535,7 +535,7 @@
             <input type="text" id="antiguedad" name="antiguedad" placeholder="Ej. 3 años">
           </div>
           <div class="field-group">
-            <label>Dropdown</label>
+            <label>Tipo de avería</label>
             <select id="averia" name="averia">
               <option value="">Uso / Desgaste</option>
               <option>Sin avería</option>
@@ -559,7 +559,7 @@
         </div>
 
         <div class="field-group">
-          <label>Fotos del equipo</label>
+          <label>Foto de la avería</label>
           <div class="upload-area" id="uploadArea">
             <input type="file" id="fotosEquipo" name="fotosEquipo" accept="image/*" multiple onchange="previewFotos(this)">
             <div class="upload-icon">📷</div>
@@ -579,7 +579,7 @@
       </div>
       <div class="section-body">
 
-        <div class="field-group.inline" style="display:flex; gap:16px;">
+        <div style="display:flex; gap:16px;">
           <div class="field-group" style="flex:1">
             <label>Nombre del técnico <span class="required">*</span></label>
             <input type="text" id="tecnicoNombre" name="tecnicoNombre" placeholder="Nombre completo" required>
@@ -702,7 +702,7 @@ document.getElementById('averia').addEventListener('change', function() {
   document.getElementById('averiaOtrosGroup').style.display = this.value === 'Otros' ? '' : 'none';
 });
 
-// ─── FOTOS PREVIEW ────────────────────────────────────────────────────────────
+// ─── FOTOS: PREVIEW + ALMACENAMIENTO BASE64 ───────────────────────────────────
 function previewFotos(input) {
   const container = document.getElementById('previewContainer');
   container.innerHTML = '';
@@ -718,7 +718,7 @@ function previewFotos(input) {
   });
 }
 
-// ─── CONVERTIR FOTOS A BASE64 ─────────────────────────────────────────────────
+// ─── CONVERTIR FOTOS A BASE64 PARA EL ENVÍO ──────────────────────────────────
 function filesToBase64(files) {
   return Promise.all(
     Array.from(files).slice(0, 10).map(file =>
@@ -735,6 +735,7 @@ function filesToBase64(files) {
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
+  // Validación de campos requeridos
   const required = ['cardId','nombreAsegurado','dni','electrodomestico','diagnostico','tecnicoNombre','tecnicoEmail'];
   let valid = true;
   required.forEach(id => {
@@ -758,65 +759,67 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
 
   const ahora = new Date().toISOString();
 
-  // Convertir fotos a base64 ANTES de construir el payload
+  // ── Convertir fotos a base64 ANTES de construir el payload ──────────────────
   const fotosInput = document.getElementById('fotosEquipo');
   const fotosBase64 = fotosInput.files.length > 0
     ? await filesToBase64(fotosInput.files)
     : [];
 
+  // ── Payload completo ─────────────────────────────────────────────────────────
   const payload = {
     formTitle: "ACTA DE VISITA TÉCNICA",
     submissionDate: ahora,
     pretty: buildPretty(),
     "body.pretty": buildPretty(),
-    q59_nombreDel: document.getElementById('cardId').value,
+    q59_nombreDel:   document.getElementById('cardId').value,
     q78_nombreDel78: document.getElementById('nombreAsegurado').value,
-    q57_dni: document.getElementById('dni').value,
-    q54_fechaDe: { date: new Date().toISOString().split('T')[0], time: new Date().toTimeString().slice(0,5) },
+    q57_dni:         document.getElementById('dni').value,
+    q54_fechaDe: {
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toTimeString().slice(0,5)
+    },
     q67_escribaUna: JSON.stringify([{
       "Electrodoméstico": document.getElementById('electrodomestico').value,
-      "Marca.": document.getElementById('marca').value,
-      "Modelo": document.getElementById('modelo').value,
-      "Nº de serie": document.getElementById('numSerie').value,
-      "Antigüedad": document.getElementById('antiguedad').value,
-      "Dropdown": document.getElementById('averia').value || 'Uso / Desgaste',
-      "Diagnóstico": document.getElementById('diagnostico').value
+      "Marca.":           document.getElementById('marca').value,
+      "Modelo":           document.getElementById('modelo').value,
+      "Nº de serie":      document.getElementById('numSerie').value,
+      "Antigüedad":       document.getElementById('antiguedad').value,
+      "Dropdown":         document.getElementById('averia').value || 'Uso / Desgaste',
+      "Diagnóstico":      document.getElementById('diagnostico').value
     }]),
-    q71_tecnico: document.getElementById('tecnicoNombre').value,
+    q71_tecnico:   document.getElementById('tecnicoNombre').value,
     q79_tecnico79: document.getElementById('tecnicoEmail').value,
-    q73_firma73: getSignatureData('firmaTecnico') || '',
+    q73_firma73:   getSignatureData('firmaTecnico') || '',
     q70_cliente70: getSignatureData('firmaCliente') || '',
-    fotosEquipo: fotosBase64,
-    q75_alarma: '',
-    q76_comentario: '',
-    telefono: document.getElementById('telefono').value,
-    garantia: '',
-    username: "asesoria_impulsamos",
-    source: "html_form"
+    fotosEquipo:   fotosBase64,   // ← array de base64, listo para Odoo
+    telefono:      document.getElementById('telefono').value,
+    username:      "asesoria_impulsamos",
+    source:        "html_form"
   };
 
+  // ── Payload para N8N ─────────────────────────────────────────────────────────
   const n8nPayload = {
     body: {
-      pretty: buildPretty(),
-      rawRequest: JSON.stringify(payload),
-      q59_nombreDel: payload.q59_nombreDel,
+      pretty:          buildPretty(),
+      q59_nombreDel:   payload.q59_nombreDel,
       q78_nombreDel78: payload.q78_nombreDel78,
-      q57_dni: payload.q57_dni,
-      q54_fechaDe: payload.q54_fechaDe,
-      q67_escribaUna: payload.q67_escribaUna,
-      q71_tecnico: payload.q71_tecnico,
-      q79_tecnico79: payload.q79_tecnico79,
-      q73_firma73: payload.q73_firma73,
-      q70_cliente70: payload.q70_cliente70,
-      fotosEquipo: fotosBase64,
-      telefono: payload.telefono,
-      username: "asesoria_impulsamos",
-      source: "html_form"
+      q57_dni:         payload.q57_dni,
+      q54_fechaDe:     payload.q54_fechaDe,
+      q67_escribaUna:  payload.q67_escribaUna,
+      q71_tecnico:     payload.q71_tecnico,
+      q79_tecnico79:   payload.q79_tecnico79,
+      q73_firma73:     payload.q73_firma73,
+      q70_cliente70:   payload.q70_cliente70,
+      fotosEquipo:     fotosBase64,   // ← array de base64
+      telefono:        payload.telefono,
+      username:        "asesoria_impulsamos",
+      source:          "html_form"
     }
   };
 
+  // ── URLs de destino ──────────────────────────────────────────────────────────
   const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzrKFjE6LNEOeON-sPG2_MridCXEz3TWnhuQUcJCkWHB_FKUhExb0ELAHTHTMYk6eBX/exec';
-  const N8N_URL    = 'https://n8n.srv1077755.hstgr.cloud/webhook/0f0c12cb-8cb0-4d74-b849-1ae9a59e33dd';
+  const N8N_URL    = 'https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica';  // ← URL CORREGIDA
 
   const sheetsPayload = {
     ...payload,
