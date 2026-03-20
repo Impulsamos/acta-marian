@@ -841,7 +841,8 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
     fetch(N8N_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(n8nPayload)
+      body: JSON.stringify(n8nPayload),
+      mode: 'no-cors'
     })
   ]);
 
