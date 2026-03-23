@@ -6,407 +6,367 @@
 <title>ACTA DE VISITA TÉCNICA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --orange: #E8500A;
-    --orange-light: #FFF3EE;
-    --orange-mid: #FFD4BC;
-    --navy: #1A1F36;
-    --navy-mid: #2D3561;
-    --blue-light: #EEF2FF;
-    --gray: #6B7280;
-    --gray-light: #F3F4F6;
-    --border: #E5E7EB;
-    --white: #FFFFFF;
-    --text: #111827;
-    --text-soft: #4B5563;
-    --radius: 12px;
-    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: #F0F2F8;
-    min-height: 100vh;
-    padding: 24px 16px 60px;
-    color: var(--text);
-  }
-
-  .form-wrapper { max-width: 680px; margin: 0 auto; }
-
-  .form-header {
-    background: var(--navy);
-    border-radius: var(--radius) var(--radius) 0 0;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-
-  .header-accent { height: 8px; background: linear-gradient(90deg, var(--orange) 0%, #FF8C42 100%); }
-
-  .header-content {
-    padding: 28px 32px 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .logo-circle {
-    width: 52px; height: 52px;
-    background: var(--orange);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0;
-  }
-
-  .header-text h1 { font-size: 20px; font-weight: 600; color: var(--white); letter-spacing: 0.02em; }
-  .header-text p { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 3px; }
-
-  .section-card {
-    background: var(--white);
-    margin-top: 12px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-  }
-
-  .section-card:first-of-type { border-radius: 0 0 var(--radius) var(--radius); margin-top: 0; }
-
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 18px 28px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--blue-light);
-  }
-
-  .section-icon {
-    width: 32px; height: 32px;
-    background: var(--navy);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; flex-shrink: 0;
-  }
-
-  .section-title { font-size: 13px; font-weight: 600; color: var(--navy-mid); letter-spacing: 0.06em; text-transform: uppercase; }
-
-  .section-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
-
-  .field-group { display: flex; flex-direction: column; gap: 6px; }
-  .field-group.inline { flex-direction: row; gap: 16px; }
-  .field-group.inline > * { flex: 1; }
-
-  label { font-size: 13px; font-weight: 500; color: var(--text-soft); }
-  label .required { color: var(--orange); margin-left: 2px; }
-
-  input[type="text"], input[type="email"], input[type="date"],
-  input[type="time"], input[type="number"], select, textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--white);
-    transition: border-color 0.15s, box-shadow 0.15s;
-    -webkit-appearance: none;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--orange);
-    box-shadow: 0 0 0 3px rgba(232,80,10,0.1);
-  }
-
-  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
-
-  select {
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-  }
-
-  .datetime-row { display: flex; gap: 12px; }
-  .datetime-row > * { flex: 1; }
-
-  .equipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-  .obs-box {
-    background: #FFFBEB;
-    border: 1.5px solid #FDE68A;
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-
-  .obs-box label { color: #92400E; font-weight: 600; }
-  .obs-box textarea { border-color: #FDE68A; background: #FFFBEB; min-height: 80px; }
-  .obs-box textarea:focus { border-color: #F59E0B; box-shadow: 0 0 0 3px rgba(245,158,11,0.1); }
-  .obs-hint { font-size: 12px; color: #B45309; margin-top: 6px; font-style: italic; }
-
-  @media (max-width: 540px) {
-    .equipo-grid { grid-template-columns: 1fr; }
-    .field-group.inline { flex-direction: column; }
-    .datetime-row { flex-direction: column; }
-  }
-
-  .upload-area {
-    border: 2px dashed var(--orange-mid);
-    border-radius: 10px;
-    background: var(--orange-light);
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    position: relative;
-  }
-
-  .upload-area:hover { background: #FFE8DA; border-color: var(--orange); }
-  .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-area p { font-size: 13px; color: var(--orange); font-weight: 500; }
-  .upload-area span { font-size: 12px; color: var(--gray); margin-top: 4px; display: block; }
-  .upload-contador { display: inline-block; margin-top: 8px; background: var(--orange); color: white; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-  .upload-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-  .preview-item { position: relative; width: 72px; height: 72px; }
-  .preview-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 2px solid var(--orange-mid); display: block; }
-  .preview-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; background: var(--orange); color: white; border: none; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 3; }
-  .upload-area.tiene-fotos { border-color: var(--orange); background: #FFE8DA; }
-
-  .firma-container { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: #FAFAFA; }
-  .firma-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--gray-light); border-bottom: 1px solid var(--border); }
-  .firma-header span { font-size: 12px; color: var(--gray); font-weight: 500; }
-  .btn-clear { font-size: 12px; color: var(--orange); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; padding: 2px 6px; }
-  .btn-clear:hover { text-decoration: underline; }
-  canvas { display: block; width: 100%; height: 140px; cursor: crosshair; touch-action: none; }
-
-  .info-note { background: var(--blue-light); border-left: 3px solid var(--navy-mid); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--navy-mid); }
-
-  .submit-area { margin-top: 16px; display: flex; justify-content: flex-end; padding: 0 4px; }
-
-  .btn-submit { background: var(--orange); color: white; border: none; padding: 14px 40px; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; letter-spacing: 0.01em; transition: background 0.15s, transform 0.1s; box-shadow: 0 4px 12px rgba(232,80,10,0.3); }
-  .btn-submit:hover { background: #C93D00; transform: translateY(-1px); }
-  .btn-submit:active { transform: translateY(0); }
-  .btn-submit.loading { opacity: 0.7; pointer-events: none; }
-
-  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(26,31,54,0.7); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
-  .success-overlay.show { display: flex; }
-  .success-card { background: white; border-radius: 20px; padding: 40px 36px; text-align: center; max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .success-icon { width: 64px; height: 64px; background: #ECFDF5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
-  .success-card h2 { font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
-  .success-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
-  .btn-nuevo { margin-top: 24px; background: var(--navy); color: white; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; }
-  .btn-nuevo:hover { background: var(--navy-mid); }
+:root {
+--orange: #E8500A;
+--orange-light: #FFF3EE;
+--orange-mid: #FFD4BC;
+--navy: #1A1F36;
+--navy-mid: #2D3561;
+--blue-light: #EEF2FF;
+--gray: #6B7280;
+--gray-light: #F3F4F6;
+--border: #E5E7EB;
+--white: #FFFFFF;
+--text: #111827;
+--text-soft: #4B5563;
+--radius: 12px;
+--shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: 'DM Sans', sans-serif;
+background: #F0F2F8;
+min-height: 100vh;
+padding: 24px 16px 60px;
+color: var(--text);
+}
+.form-wrapper { max-width: 680px; margin: 0 auto; }
+.form-header {
+background: var(--navy);
+border-radius: var(--radius) var(--radius) 0 0;
+padding: 0;
+overflow: hidden;
+box-shadow: var(--shadow);
+}
+.header-accent {
+height: 8px;
+background: linear-gradient(90deg, var(--orange) 0%, #FF8C42 100%);
+}
+.header-content {
+padding: 28px 32px 24px;
+display: flex;
+align-items: center;
+gap: 20px;
+}
+.logo-circle {
+width: 52px; height: 52px;
+background: var(--orange);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 22px; flex-shrink: 0;
+}
+.header-text h1 { font-size: 20px; font-weight: 600; color: var(--white); letter-spacing: 0.02em; }
+.header-text p { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+.section-card {
+background: var(--white);
+margin-top: 12px;
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+overflow: hidden;
+}
+.section-card:first-of-type { border-radius: 0 0 var(--radius) var(--radius); margin-top: 0; }
+.section-header {
+display: flex; align-items: center; gap: 10px;
+padding: 18px 28px 16px;
+border-bottom: 1px solid var(--border);
+background: var(--blue-light);
+}
+.section-icon {
+width: 32px; height: 32px;
+background: var(--navy);
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 15px; flex-shrink: 0;
+}
+.section-title { font-size: 13px; font-weight: 600; color: var(--navy-mid); letter-spacing: 0.06em; text-transform: uppercase; }
+.section-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group.inline { flex-direction: row; gap: 16px; }
+.field-group.inline > * { flex: 1; }
+label { font-size: 13px; font-weight: 500; color: var(--text-soft); }
+label .required { color: var(--orange); margin-left: 2px; }
+input[type="text"], input[type="email"], input[type="date"], input[type="time"],
+input[type="number"], select, textarea {
+width: 100%; padding: 10px 14px;
+border: 1.5px solid var(--border); border-radius: 8px;
+font-family: 'DM Sans', sans-serif; font-size: 14px;
+color: var(--text); background: var(--white);
+transition: border-color 0.15s, box-shadow 0.15s;
+-webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+outline: none; border-color: var(--orange);
+box-shadow: 0 0 0 3px rgba(232,80,10,0.1);
+}
+textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+select {
+cursor: pointer;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+}
+.datetime-row { display: flex; gap: 12px; }
+.datetime-row > * { flex: 1; }
+.equipo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 540px) {
+.equipo-grid { grid-template-columns: 1fr; }
+.field-group.inline { flex-direction: column; }
+.datetime-row { flex-direction: column; }
+}
+.upload-area {
+border: 2px dashed var(--orange-mid); border-radius: 10px;
+background: var(--orange-light); padding: 28px 20px;
+text-align: center; cursor: pointer;
+transition: background 0.15s, border-color 0.15s;
+position: relative;
+}
+.upload-area:hover { background: #FFE8DA; border-color: var(--orange); }
+.upload-area input[type="file"] {
+position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-area p { font-size: 13px; color: var(--orange); font-weight: 500; }
+.upload-area span { font-size: 12px; color: var(--gray); margin-top: 4px; display: block; }
+.upload-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.preview-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 2px solid var(--orange-mid); }
+.firma-container { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: #FAFAFA; }
+.firma-header {
+display: flex; justify-content: space-between; align-items: center;
+padding: 10px 14px; background: var(--gray-light); border-bottom: 1px solid var(--border);
+}
+.firma-header span { font-size: 12px; color: var(--gray); font-weight: 500; }
+.btn-clear { font-size: 12px; color: var(--orange); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; padding: 2px 6px; }
+.btn-clear:hover { text-decoration: underline; }
+canvas { display: block; width: 100%; height: 140px; cursor: crosshair; touch-action: none; }
+.yesno-group { display: flex; gap: 12px; }
+.radio-option {
+flex: 1; display: flex; align-items: center; gap: 8px;
+padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+cursor: pointer; transition: border-color 0.15s, background 0.15s;
+font-size: 14px; font-weight: 500; color: var(--text-soft);
+}
+.radio-option input { display: none; }
+.radio-option.selected { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+.radio-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; transition: border-color 0.15s, background 0.15s; }
+.radio-option.selected .radio-dot { border-color: var(--orange); background: var(--orange); }
+.info-note { background: var(--blue-light); border-left: 3px solid var(--navy-mid); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--navy-mid); }
+.submit-area { margin-top: 16px; display: flex; justify-content: flex-end; padding: 0 4px; }
+.btn-submit {
+background: var(--orange); color: white; border: none;
+padding: 14px 40px; border-radius: 10px;
+font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+cursor: pointer; letter-spacing: 0.01em;
+transition: background 0.15s, transform 0.1s;
+box-shadow: 0 4px 12px rgba(232,80,10,0.3);
+}
+.btn-submit:hover { background: #C93D00; transform: translateY(-1px); }
+.btn-submit:active { transform: translateY(0); }
+.success-overlay {
+display: none; position: fixed; inset: 0;
+background: rgba(26,31,54,0.7); z-index: 100;
+align-items: center; justify-content: center; padding: 24px;
+}
+.success-overlay.show { display: flex; }
+.success-card {
+background: white; border-radius: 20px; padding: 40px 36px;
+text-align: center; max-width: 380px; width: 100%;
+box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.success-icon { width: 64px; height: 64px; background: #ECFDF5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
+.success-card h2 { font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+.success-card p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+.btn-nuevo { margin-top: 24px; background: var(--navy); color: white; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; }
+.btn-nuevo:hover { background: var(--navy-mid); }
+.btn-submit.loading { opacity: 0.7; pointer-events: none; }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
-
 <div class="form-wrapper">
-
-  <div class="form-header">
-    <div class="header-accent"></div>
-    <div class="header-content">
-      <div class="logo-circle">🔧</div>
-      <div class="header-text">
-        <h1>ACTA DE VISITA TÉCNICA</h1>
-        <p>Electrodomésticos Mariana SL · Impulsamos</p>
-      </div>
-    </div>
-  </div>
-
-  <form id="mainForm" novalidate>
-
-    <!-- DATOS DE LA VISITA -->
-    <div class="section-card" style="border-radius:0 0 12px 12px; margin-top:0;">
-      <div class="section-header">
-        <div class="section-icon">📋</div>
-        <span class="section-title">Datos de la Visita</span>
-      </div>
-      <div class="section-body">
-
-        <div class="field-group">
-          <label>Card-id / Nº Expediente <span class="required">*</span></label>
-          <input type="text" id="cardId" placeholder="Ej. 86" required>
-        </div>
-
-        <div class="field-group">
-          <label>Nombre del asegurado <span class="required">*</span></label>
-          <input type="text" id="nombreAsegurado" placeholder="Nombre completo" required>
-        </div>
-
-        <div class="field-group">
-          <label>DNI / NIF <span class="required">*</span></label>
-          <input type="text" id="dni" placeholder="12345678A" required>
-        </div>
-
-        <div class="field-group">
-          <label>Número de teléfono del asegurado</label>
-          <input type="text" id="telefono" placeholder="600 000 000">
-          <span style="font-size:12px;color:#6B7280;margin-top:4px;">Favor ingrese un número de teléfono válido</span>
-        </div>
-
-        <div class="field-group">
-          <label>Domicilio del asegurado <span class="required">*</span></label>
-          <input type="text" id="domicilio" placeholder="Calle, número, piso, ciudad, CP" required>
-        </div>
-
-        <div class="datetime-row">
-          <div class="field-group">
-            <label>Fecha de la visita <span class="required">*</span></label>
-            <input type="date" id="fechaVisita" required>
-          </div>
-          <div class="field-group">
-            <label>Hora de la visita <span class="required">*</span></label>
-            <input type="time" id="horaVisita" required>
-          </div>
-        </div>
-
-        <!-- OBSERVACIONES ESPECIALES -->
-        <div class="obs-box">
-          <div class="field-group">
-            <label>📌 Observaciones para el técnico</label>
-            <textarea id="observacionesTecnico" placeholder="Ej: Tocar el timbre del 2º izquierda · Hablar con la señora María · Acceder por la puerta trasera · Llamar antes de llegar..."></textarea>
-            <p class="obs-hint">Indicaciones especiales que el técnico debe saber antes de ir al domicilio</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- DATOS DEL ELECTRODOMÉSTICO -->
-    <div class="section-card">
-      <div class="section-header">
-        <div class="section-icon">🏠</div>
-        <span class="section-title">Datos del Electrodoméstico</span>
-      </div>
-      <div class="section-body">
-
-        <div class="equipo-grid">
-          <div class="field-group">
-            <label>Electrodoméstico <span class="required">*</span></label>
-            <input type="text" id="electrodomestico" placeholder="Ej. Lavadora" required>
-          </div>
-          <div class="field-group">
-            <label>Marca</label>
-            <input type="text" id="marca" placeholder="Ej. Samsung">
-          </div>
-          <div class="field-group">
-            <label>Modelo</label>
-            <input type="text" id="modelo" placeholder="Ej. WW90T">
-          </div>
-          <div class="field-group">
-            <label>Nº de serie</label>
-            <input type="text" id="numSerie" placeholder="Nº de serie">
-          </div>
-          <div class="field-group">
-            <label>Antigüedad</label>
-            <input type="text" id="antiguedad" placeholder="Ej. 3 años">
-          </div>
-          <div class="field-group">
-            <label>Tipo de avería</label>
-            <select id="averia">
-              <option value="">Uso / Desgaste</option>
-              <option>Sin avería</option>
-              <option>Incendio</option>
-              <option>Defecto de fabricación</option>
-              <option>Caída de líquido</option>
-              <option>Falta de mantenimiento</option>
-              <option>Otros</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-group" id="averiaOtrosGroup" style="display:none">
-          <label>Especificar avería</label>
-          <input type="text" id="averiaOtros" placeholder="Describe la avería...">
-        </div>
-
-        <div class="field-group">
-          <label>Diagnóstico <span class="required">*</span></label>
-          <textarea id="diagnostico" placeholder="Describe el diagnóstico técnico detallado..." rows="4" required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label>Foto de la avería</label>
-          <div class="upload-area" id="uploadArea">
-            <input type="file" id="fotosEquipo" accept="image/*" multiple onchange="previewFotos(this)">
-            <div class="upload-icon">📷</div>
-            <p>Añadir y subir archivos</p>
-            <span>JPG, PNG · Máximo 10 archivos</span>
-            <span id="uploadContador" class="upload-contador" style="display:none">0 foto(s)</span>
-          </div>
-          <div class="upload-preview" id="previewContainer"></div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- DATOS DEL TÉCNICO -->
-    <div class="section-card">
-      <div class="section-header">
-        <div class="section-icon">👷</div>
-        <span class="section-title">Datos del Técnico</span>
-      </div>
-      <div class="section-body">
-
-        <div class="field-group.inline" style="display:flex;gap:16px;">
-          <div class="field-group" style="flex:1">
-            <label>Nombre del técnico <span class="required">*</span></label>
-            <input type="text" id="tecnicoNombre" placeholder="Nombre completo" required>
-          </div>
-          <div class="field-group" style="flex:1">
-            <label>Email del técnico <span class="required">*</span></label>
-            <input type="email" id="tecnicoEmail" placeholder="tecnico@email.com" required>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label>Firma del técnico <span class="required">*</span></label>
-          <div class="firma-container">
-            <div class="firma-header">
-              <span>Firma con el dedo o ratón</span>
-              <button type="button" class="btn-clear" onclick="clearCanvas('firmaTecnico')">Borrar</button>
-            </div>
-            <canvas id="firmaTecnico" width="620" height="140"></canvas>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label>Firma del cliente / asegurado</label>
-          <div class="firma-container">
-            <div class="firma-header">
-              <span>Firma con el dedo o ratón</span>
-              <button type="button" class="btn-clear" onclick="clearCanvas('firmaCliente')">Borrar</button>
-            </div>
-            <canvas id="firmaCliente" width="620" height="140"></canvas>
-          </div>
-        </div>
-
-        <div class="info-note">
-          Al enviar este formulario, los datos se registrarán automáticamente en el sistema Odoo del cliente.
-        </div>
-
-      </div>
-    </div>
-
-    <div class="submit-area">
-      <button type="submit" class="btn-submit" id="btnSubmit">Enviar Acta</button>
-    </div>
-
-  </form>
+<div class="form-header">
+<div class="header-accent"></div>
+<div class="header-content">
+<div class="logo-circle">🔧</div>
+<div class="header-text">
+<h1>ACTA DE VISITA TÉCNICA</h1>
+<p>Electrodomésticos Mariana SL · Impulsamos</p>
 </div>
-
+</div>
+</div>
+<form id="mainForm" novalidate>
+<div class="section-card" style="border-radius:0 0 12px 12px; margin-top:0;">
+<div class="section-header">
+<div class="section-icon">📋</div>
+<span class="section-title">Datos de la Visita</span>
+</div>
+<div class="section-body">
+<div class="field-group">
+<label>Card-id / Nº Expediente <span class="required">*</span></label>
+<input type="text" id="cardId" name="cardId" placeholder="Ej. 86" required>
+</div>
+<div class="field-group">
+<label>Nombre del asegurado <span class="required">*</span></label>
+<input type="text" id="nombreAsegurado" name="nombreAsegurado" placeholder="Nombre completo" required>
+</div>
+<div class="field-group">
+<label>DNI / NIF <span class="required">*</span></label>
+<input type="text" id="dni" name="dni" placeholder="12345678A" required>
+</div>
+<div class="field-group">
+<label>Número de teléfono</label>
+<input type="text" id="telefono" name="telefono" placeholder="600 000 000">
+<span style="font-size:12px; color:#6B7280; margin-top:4px;">Favor ingrese un número de teléfono válido</span>
+</div>
+<div class="field-group">
+<label>Domicilio del asegurado</label>
+<input type="text" id="domicilio" name="domicilio" placeholder="Calle, número, piso, ciudad, CP">
+</div>
+<div class="datetime-row">
+<div class="field-group">
+<label>Fecha de la visita <span class="required">*</span></label>
+<input type="date" id="fechaVisita" name="fechaVisita" required>
+</div>
+<div class="field-group">
+<label>Hora de la visita <span class="required">*</span></label>
+<input type="time" id="horaVisita" name="horaVisita" required>
+</div>
+</div>
+</div>
+</div>
+<div class="section-card">
+<div class="section-header">
+<div class="section-icon">🏠</div>
+<span class="section-title">Datos del Electrodoméstico</span>
+</div>
+<div class="section-body">
+<div class="equipo-grid">
+<div class="field-group">
+<label>Electrodoméstico <span class="required">*</span></label>
+<input type="text" id="electrodomestico" name="electrodomestico" placeholder="Ej. Lavadora" required>
+</div>
+<div class="field-group">
+<label>Marca</label>
+<input type="text" id="marca" name="marca" placeholder="Ej. Samsung">
+</div>
+<div class="field-group">
+<label>Modelo</label>
+<input type="text" id="modelo" name="modelo" placeholder="Ej. WW90T">
+</div>
+<div class="field-group">
+<label>Nº de serie</label>
+<input type="text" id="numSerie" name="numSerie" placeholder="Nº de serie">
+</div>
+<div class="field-group">
+<label>Antigüedad</label>
+<input type="text" id="antiguedad" name="antiguedad" placeholder="Ej. 3 años">
+</div>
+<div class="field-group">
+<label>Tipo de avería</label>
+<select id="averia" name="averia">
+<option value="">Uso / Desgaste</option>
+<option>Sin avería</option>
+<option>Incendio</option>
+<option>Defecto de fabricación</option>
+<option>Caída de líquido</option>
+<option>Falta de mantenimiento</option>
+<option>Otros</option>
+</select>
+</div>
+</div>
+<div class="field-group" id="averiaOtrosGroup" style="display:none">
+<label>Especificar avería</label>
+<input type="text" id="averiaOtros" name="averiaOtros" placeholder="Describe la avería...">
+</div>
+<div class="field-group">
+<label>Diagnóstico <span class="required">*</span></label>
+<textarea id="diagnostico" name="diagnostico" placeholder="Describe el diagnóstico técnico detallado..." rows="4" required></textarea>
+</div>
+<div class="field-group">
+<label>Foto de la avería</label>
+<div class="upload-area" id="uploadArea">
+<input type="file" id="fotosEquipo" name="fotosEquipo" accept="image/*" multiple onchange="previewFotos(this)">
+<div class="upload-icon">📷</div>
+<p>Añadir y subir archivos</p>
+<span>JPG, PNG · Máximo 10 archivos</span>
+</div>
+<div class="upload-preview" id="previewContainer"></div>
+</div>
+</div>
+</div>
+<div class="section-card">
+<div class="section-header">
+<div class="section-icon">👷</div>
+<span class="section-title">Datos del Técnico</span>
+</div>
+<div class="section-body">
+<div style="display:flex; gap:16px;">
+<div class="field-group" style="flex:1">
+<label>Nombre del técnico <span class="required">*</span></label>
+<input type="text" id="tecnicoNombre" name="tecnicoNombre" placeholder="Nombre completo" required>
+</div>
+<div class="field-group" style="flex:1">
+<label>Email del técnico <span class="required">*</span></label>
+<input type="email" id="tecnicoEmail" name="tecnicoEmail" placeholder="tecnico@email.com" required>
+</div>
+</div>
+<div class="field-group">
+<label>Firma del técnico <span class="required">*</span></label>
+<div class="firma-container">
+<div class="firma-header">
+<span>Firma con el dedo o ratón</span>
+<button type="button" class="btn-clear" onclick="clearCanvas('firmaTecnico')">Borrar</button>
+</div>
+<canvas id="firmaTecnico" width="620" height="140"></canvas>
+</div>
+</div>
+<div class="field-group">
+<label>Firma del cliente / asegurado</label>
+<div class="firma-container">
+<div class="firma-header">
+<span>Firma con el dedo o ratón</span>
+<button type="button" class="btn-clear" onclick="clearCanvas('firmaCliente')">Borrar</button>
+</div>
+<canvas id="firmaCliente" width="620" height="140"></canvas>
+</div>
+</div>
+<div class="info-note">
+Al enviar este formulario, los datos se registrarán automáticamente en el sistema Odoo del cliente.
+</div>
+</div>
+</div>
+<div class="submit-area">
+<button type="submit" class="btn-submit" id="btnSubmit">Enviar Acta</button>
+</div>
+</form>
+</div>
 <div class="success-overlay" id="successOverlay">
-  <div class="success-card">
-    <div class="success-icon">✅</div>
-    <h2>Acta enviada correctamente</h2>
-    <p>Los datos han sido registrados en el sistema. El expediente ha sido actualizado.</p>
-    <button class="btn-nuevo" onclick="resetForm()">Nueva acta</button>
-  </div>
+<div class="success-card">
+<div class="success-icon">✅</div>
+<h2>Acta enviada correctamente</h2>
+<p>Los datos han sido registrados en el sistema. El expediente ha sido actualizado.</p>
+<button class="btn-nuevo" onclick="resetForm()">Nueva acta</button>
 </div>
-
+</div>
 <script>
+// ─── PREFILL DESDE URL PARAMS ─────────────────────────────────────────────────
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  function set(id, key) {
+    const val = params.get(key);
+    const el = document.getElementById(id);
+    if (val && el) el.value = decodeURIComponent(val);
+  }
+  set('cardId',          'id_op');
+  set('nombreAsegurado', 'nombre');
+  set('dni',             'dni');
+  set('telefono',        'telefono');
+  set('domicilio',       'direccion');
+  set('fechaVisita',     'fecha');
+  set('horaVisita',      'hora');
+  set('tecnicoNombre',   'tecnico_nombre');
+  set('tecnicoEmail',    'tecnico_email');
+})();
+
+// ─── FIRMAS ───────────────────────────────────────────────────────────────────
 function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
@@ -414,8 +374,12 @@ function initCanvas(id) {
   canvas.width = rect.width * window.devicePixelRatio || 620;
   canvas.height = 140 * window.devicePixelRatio || 140;
   ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-  ctx.strokeStyle = '#1A1F36'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  let drawing = false, lastX, lastY;
+  ctx.strokeStyle = '#1A1F36';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  let drawing = false;
+  let lastX, lastY;
   function getPos(e) {
     const r = canvas.getBoundingClientRect();
     const src = e.touches ? e.touches[0] : e;
@@ -450,51 +414,50 @@ function getSignatureData(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
   const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  return !data.some(v => v !== 0) ? null : canvas.toDataURL('image/png');
+  const isEmpty = !data.some(v => v !== 0);
+  return isEmpty ? null : canvas.toDataURL('image/png');
 }
 
 initCanvas('firmaTecnico');
 initCanvas('firmaCliente');
 
+// ─── AVERÍA OTROS ─────────────────────────────────────────────────────────────
 document.getElementById('averia').addEventListener('change', function() {
   document.getElementById('averiaOtrosGroup').style.display = this.value === 'Otros' ? '' : 'none';
 });
 
-let fotosSeleccionadas = [];
-
+// ─── FOTOS: PREVIEW ───────────────────────────────────────────────────────────
 function previewFotos(input) {
-  const nuevos = Array.from(input.files).slice(0, 10 - fotosSeleccionadas.length);
-  nuevos.forEach(file => {
-    if (fotosSeleccionadas.length >= 10) return;
+  const container = document.getElementById('previewContainer');
+  container.innerHTML = '';
+  Array.from(input.files).slice(0, 10).forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => { fotosSeleccionadas.push({ file, base64: e.target.result }); renderizarPreview(); };
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'preview-thumb';
+      container.appendChild(img);
+    };
     reader.readAsDataURL(file);
   });
-  input.value = '';
 }
 
-function renderizarPreview() {
-  const container = document.getElementById('previewContainer');
-  const contador = document.getElementById('uploadContador');
-  const area = document.getElementById('uploadArea');
-  container.innerHTML = '';
-  fotosSeleccionadas.forEach((item, idx) => {
-    const wrapper = document.createElement('div'); wrapper.className = 'preview-item';
-    const img = document.createElement('img'); img.src = item.base64; img.className = 'preview-thumb';
-    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'preview-remove'; btn.textContent = '×';
-    btn.onclick = () => { fotosSeleccionadas.splice(idx, 1); renderizarPreview(); };
-    wrapper.appendChild(img); wrapper.appendChild(btn); container.appendChild(wrapper);
-  });
-  const total = fotosSeleccionadas.length;
-  contador.style.display = total > 0 ? 'inline-block' : 'none';
-  contador.textContent = `${total} foto${total > 1 ? 's' : ''} seleccionada${total > 1 ? 's' : ''}`;
-  area.classList.toggle('tiene-fotos', total > 0);
+function filesToBase64(files) {
+  return Promise.all(
+    Array.from(files).slice(0, 10).map(file =>
+      new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      })
+    )
+  );
 }
 
+// ─── SUBMIT → N8N WEBHOOK ─────────────────────────────────────────────────────
 document.getElementById('mainForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-
-  const required = ['cardId','nombreAsegurado','dni','domicilio','fechaVisita','horaVisita','electrodomestico','diagnostico','tecnicoNombre','tecnicoEmail'];
+  const required = ['cardId','nombreAsegurado','dni','electrodomestico','diagnostico','tecnicoNombre','tecnicoEmail'];
   let valid = true;
   required.forEach(id => {
     const el = document.getElementById(id);
@@ -514,25 +477,27 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
   btn.textContent = 'Enviando...';
   btn.classList.add('loading');
 
-  const fotosBase64 = fotosSeleccionadas.map(i => i.base64);
+  const ahora = new Date().toISOString();
+  const fotosInput = document.getElementById('fotosEquipo');
+  const fotosBase64 = fotosInput.files.length > 0 ? await filesToBase64(fotosInput.files) : [];
 
-  const payload = {
+  const n8nPayload = {
     body: {
-      q59_nombreDel:        document.getElementById('cardId').value,
-      q78_nombreDel78:      document.getElementById('nombreAsegurado').value,
-      q57_dni:              document.getElementById('dni').value,
-      telefono:             document.getElementById('telefono').value,
-      domicilio:            document.getElementById('domicilio').value,
-      fechaVisita:          document.getElementById('fechaVisita').value,
-      horaVisita:           document.getElementById('horaVisita').value,
-      observacionesTecnico: document.getElementById('observacionesTecnico').value,
+      pretty: buildPretty(),
+      q59_nombreDel:   document.getElementById('cardId').value,
+      q78_nombreDel78: document.getElementById('nombreAsegurado').value,
+      q57_dni:         document.getElementById('dni').value,
+      q54_fechaDe: {
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toTimeString().slice(0,5)
+      },
       q67_escribaUna: JSON.stringify([{
         "Electrodoméstico": document.getElementById('electrodomestico').value,
-        "Marca":            document.getElementById('marca').value,
+        "Marca.":           document.getElementById('marca').value,
         "Modelo":           document.getElementById('modelo').value,
         "Nº de serie":      document.getElementById('numSerie').value,
         "Antigüedad":       document.getElementById('antiguedad').value,
-        "Tipo avería":      document.getElementById('averia').value || 'Uso / Desgaste',
+        "Dropdown":         document.getElementById('averia').value || 'Uso / Desgaste',
         "Diagnóstico":      document.getElementById('diagnostico').value
       }]),
       q71_tecnico:   document.getElementById('tecnicoNombre').value,
@@ -540,37 +505,64 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
       q73_firma73:   getSignatureData('firmaTecnico') || '',
       q70_cliente70: getSignatureData('firmaCliente') || '',
       fotosEquipo:   fotosBase64,
-      username:      "asesoria_impulsamos",
-      source:        "html_form"
+      telefono:      document.getElementById('telefono').value,
+      domicilio:     document.getElementById('domicilio').value,
+      fechaVisita:   document.getElementById('fechaVisita').value,
+      horaVisita:    document.getElementById('horaVisita').value,
+      username: "asesoria_impulsamos",
+      source:   "html_form"
     }
   };
 
-  const N8N_URL = 'https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica';
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzrKFjE6LNEOeON-sPG2_MridCXEz3TWnhuQUcJCkWHB_FKUhExb0ELAHTHTMYk6eBX/exec';
+  const N8N_URL    = 'https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica';
 
-  await fetch(N8N_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    mode: 'no-cors'
-  });
+  await Promise.allSettled([
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(n8nPayload.body)
+    }),
+    fetch(N8N_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(n8nPayload),
+      mode: 'no-cors'
+    })
+  ]);
 
   document.getElementById('successOverlay').classList.add('show');
   btn.textContent = 'Enviar Acta';
   btn.classList.remove('loading');
 });
 
+function buildPretty() {
+  return [
+    `Card-id: ${document.getElementById('cardId').value}`,
+    `Nombre del asegurado: ${document.getElementById('nombreAsegurado').value}`,
+    `DNI: ${document.getElementById('dni').value}`,
+    `Teléfono: ${document.getElementById('telefono').value}`,
+    `Electrodoméstico: ${document.getElementById('electrodomestico').value}`,
+    `Marca: ${document.getElementById('marca').value}`,
+    `Modelo: ${document.getElementById('modelo').value}`,
+    `Diagnóstico: ${document.getElementById('diagnostico').value}`,
+    `Técnico: ${document.getElementById('tecnicoNombre').value}`,
+    `Email técnico: ${document.getElementById('tecnicoEmail').value}`
+  ].join(', ');
+}
+
 function resetForm() {
   document.getElementById('mainForm').reset();
   clearCanvas('firmaTecnico');
   clearCanvas('firmaCliente');
-  fotosSeleccionadas = [];
-  renderizarPreview();
+  document.getElementById('previewContainer').innerHTML = '';
   document.getElementById('successOverlay').classList.remove('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-window.addEventListener('resize', () => { ['firmaTecnico','firmaCliente'].forEach(id => initCanvas(id)); });
+window.addEventListener('resize', () => {
+  ['firmaTecnico', 'firmaCliente'].forEach(id => initCanvas(id));
+});
 </script>
-
 </body>
 </html>
