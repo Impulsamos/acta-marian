@@ -1,180 +1,277 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACTA DE VISITA TÉCNICA</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root {
---orange: #E8500A; --orange-light: #FFF3EE; --orange-mid: #FFD4BC;
---navy: #1A1F36; --navy-mid: #2D3561; --blue-light: #EEF2FF;
---gray: #6B7280; --gray-light: #F3F4F6; --border: #E5E7EB;
---white: #FFFFFF; --text: #111827; --text-soft: #4B5563;
---radius: 12px; --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: #F0F2F8; min-height: 100vh; padding: 24px 16px 60px; color: var(--text); }
-.form-wrapper { max-width: 680px; margin: 0 auto; }
-.form-header { background: var(--navy); border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; box-shadow: var(--shadow); }
-.header-accent { height: 8px; background: linear-gradient(90deg, var(--orange) 0%, #FF8C42 100%); }
-.header-content { padding: 28px 32px 24px; display: flex; align-items: center; gap: 20px; }
-.logo-circle { width: 52px; height: 52px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-.header-text h1 { font-size: 20px; font-weight: 600; color: var(--white); }
-.section-card { background: var(--white); margin-top: 12px; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.section-header { display: flex; align-items: center; gap: 10px; padding: 18px 28px; border-bottom: 1px solid var(--border); background: var(--blue-light); }
-.section-title { font-size: 13px; font-weight: 600; color: var(--navy-mid); text-transform: uppercase; }
-.section-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
-.field-group { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 13px; font-weight: 500; color: var(--text-soft); }
-.required { color: var(--orange); }
-input, select, textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
-.datetime-row { display: flex; gap: 12px; }
-.datetime-row > * { flex: 1; }
-.upload-area { border: 2px dashed var(--orange-mid); border-radius: 10px; background: var(--orange-light); padding: 28px 20px; text-align: center; cursor: pointer; position: relative; }
-.upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.upload-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.preview-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 2px solid var(--orange-mid); }
-.firma-container { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: #FAFAFA; margin-bottom: 10px; }
-.firma-header { display: flex; justify-content: space-between; padding: 10px 14px; background: var(--gray-light); font-size: 12px; }
-canvas { display: block; width: 100%; height: 140px; cursor: crosshair; touch-action: none; }
-.btn-clear { color: var(--orange); background: none; border: none; cursor: pointer; font-weight: 600; }
-.btn-submit { width: 100%; background: var(--orange); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 20px; font-size: 16px; box-shadow: 0 4px 12px rgba(232,80,10,0.3); }
-.success-overlay { display: none; position: fixed; inset: 0; background: rgba(26,31,54,0.8); z-index: 100; align-items: center; justify-content: center; }
-.success-overlay.show { display: flex; }
-.success-card { background: white; border-radius: 20px; padding: 40px; text-align: center; max-width: 400px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acta de Visita Técnica - Marian SL</title>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <style>
+        :root { --odoo-dark: #1A1F36; --odoo-blue: #004a99; --odoo-orange: #E8500A; --border-color: #dee2e6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 10px; }
+        .form-card { max-width: 750px; margin: auto; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .form-header { background: var(--odoo-dark); color: white; padding: 25px; border-top: 6px solid var(--odoo-orange); border-radius: 8px 8px 0 0; text-align: center; }
+        .form-header h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; }
+        .form-header p { margin: 5px 0 0; opacity: 0.8; font-size: 0.9rem; }
+        .section-body { padding: 30px; }
+        h3.section-title { background: #EEF2FF; color: #1A1F36; padding: 12px 20px; font-size: 0.9rem; text-transform: uppercase; margin-top: 0; margin-bottom: 25px; border-radius: 4px; border: 1px solid #C7D2FE; }
+        .odoo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; margin-bottom: 20px; }
+        .odoo-grid.full { grid-template-columns: 1fr; }
+        .field-label { font-size: 0.85rem; color: #6B7280; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1rem; color: #111827; }
+        input[readonly] { background-color: #f9fafb; color: #6b7280; cursor: not-allowed; }
+        .photo-upload-area { background-color: #FFFBEB; border: 2px dashed #FEF3C7; border-radius: 8px; padding: 25px; text-align: center; color: #B45309; font-style: italic; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .photo-upload-area:hover { border-color: #FCD34D; background-color: #FFF9E1; }
+        .signature-container { margin-top: 25px; position: relative; }
+        .signature-box { border: 2px solid #333; border-radius: 6px; background: white; }
+        canvas { width: 100%; height: 180px; display: block; touch-action: none; }
+        .btn-clear { position: absolute; right: 10px; top: 35px; background: none; border: none; color: var(--odoo-orange); font-weight: bold; cursor: pointer; font-size: 0.8rem; z-index: 10; text-transform: uppercase;}
+        .btn-submit { display: block; width: calc(100% - 60px); margin: 30px; padding: 18px; background-color: var(--odoo-orange); color: white; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 10px rgba(232, 80, 10, 0.3);}
+        .btn-submit:hover { background-color: #d14708; }
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; font-weight: bold; color: var(--odoo-blue); }
+    </style>
 </head>
 <body>
 
-<div class="form-wrapper">
+<div id="loader">SINCRONIZANDO EXPEDIENTE CON ODOO...</div>
+
+<div class="form-card">
     <div class="form-header">
-        <div class="header-accent"></div>
-        <div class="header-content">
-            <div class="logo-circle">🔧</div>
-            <div class="header-text"><h1>ACTA DE VISITA TÉCNICA</h1><p>Electrodomésticos Mariana SL</p></div>
-        </div>
+        <h1>ACTA DE VISITA TÉCNICA</h1>
+        <p>Electrodomésticos Marian SL</p>
     </div>
 
-    <form id="mainForm">
-        <div class="section-card">
-            <div class="section-header"><span class="section-title">Datos de la Visita</span></div>
-            <div class="section-body">
-                <div class="field-group"><label>Nº Expediente <span class="required">*</span></label><input type="text" id="cardId" required></div>
-                <div class="field-group"><label>Asegurado <span class="required">*</span></label><input type="text" id="nombreAsegurado" required></div>
-                <div class="field-group"><label>DNI / NIF <span class="required">*</span></label><input type="text" id="dni" required></div>
-                <div class="field-group"><label>Teléfono</label><input type="text" id="telefono"></div>
-                <div class="field-group"><label>Domicilio</label><input type="text" id="domicilio"></div>
-                <div class="datetime-row">
-                    <div class="field-group"><label>Fecha</label><input type="date" id="fechaVisita"></div>
-                    <div class="field-group"><label>Hora</label><input type="time" id="horaVisita"></div>
+    <form id="visitaForm">
+        <input type="hidden" id="res_id">
+
+        <div class="section-body">
+            <h3 class="section-title">DATOS DE LA VISITA</h3>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">Fecha Emisión (Revisar)</label>
+                    <input type="date" id="x_studio_fecha_emisin" required>
+                </div>
+                <div>
+                    <label class="field-label">Nº Expediente (Card-ID)</label>
+                    <input type="text" id="display_id" readonly>
                 </div>
             </div>
-        </div>
+            <div class="odoo-grid full">
+                <div>
+                    <label class="field-label">Asegurado</label>
+                    <input type="text" id="cliente_nombre" readonly>
+                </div>
+            </div>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">DNI / NIF</label>
+                    <input type="text" id="x_studio_dninif" readonly>
+                </div>
+                <div>
+                    <label class="field-label">Teléfono</label>
+                    <input type="text" id="telefono" readonly>
+                </div>
+            </div>
+            <div class="odoo-grid full">
+                <div>
+                    <label class="field-label">Domicilio de Intervención</label>
+                    <input type="text" id="domicilio" readonly>
+                </div>
+            </div>
 
-        <div class="section-card">
-            <div class="section-header"><span class="section-title">Datos del Equipo</span></div>
-            <div class="section-body">
-                <div class="datetime-row">
-                    <div class="field-group"><label>Electrodoméstico <span class="required">*</span></label><input type="text" id="electrodomestico" required></div>
-                    <div class="field-group"><label>Marca</label><input type="text" id="marca"></div>
+            <h3 class="section-title">DATOS DEL EQUIPO</h3>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">Electrodoméstico</label>
+                    <input type="text" id="x_studio_electrodomstico" required>
                 </div>
-                <div class="datetime-row">
-                    <div class="field-group"><label>Modelo</label><input type="text" id="modelo"></div>
-                    <div class="field-group"><label>Nº de Serie</label><input type="text" id="numSerie"></div>
+                <div>
+                    <label class="field-label">Marca</label>
+                    <input type="text" id="x_studio_marca">
                 </div>
-                <div class="field-group"><label>Antigüedad</label><input type="text" id="antiguedad"></div>
-                <div class="field-group">
-                    <label>Tipo de avería</label>
-                    <select id="averia">
-                        <option value="Uso / Desgaste">Uso / Desgaste</option>
-                        <option value="Sin avería">Sin avería</option>
+            </div>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">Modelo</label>
+                    <input type="text" id="x_studio_modelo">
+                </div>
+                <div>
+                    <label class="field-label">Nº de Serie</label>
+                    <input type="text" id="x_studio_nmero_de_serie">
+                </div>
+            </div>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">Antigüedad (Años)</label>
+                    <input type="number" id="x_studio_antiguedad">
+                </div>
+                <div>
+                    <label class="field-label">Uso / Desgaste</label>
+                    <select id="x_studio_uso_desgaste">
+                        <option value="Normal">Normal</option>
+                        <option value="Intenso">Intenso</option>
+                        <option value="Muy Intenso">Muy Intenso</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="section-title">DIAGNÓSTICO Y EVIDENCIA</h3>
+            <div class="odoo-grid full">
+                <div>
+                    <label class="field-label">Tipo de Avería Detectada</label>
+                    <select id="x_studio_tipo_de_averia" required>
+                        <option value="">Seleccione una opción...</option>
+                        <option value="Eléctrica">Eléctrica</option>
+                        <option value="Mecánica">Mecánica</option>
+                        <option value="Fuga de Agua">Fuga de Agua</option>
+                        <option value="Electrónica">Placa/Electrónica</option>
                         <option value="Otros">Otros</option>
                     </select>
                 </div>
-                <div class="field-group"><label>Diagnóstico <span class="required">*</span></label><textarea id="diagnostico" required></textarea></div>
-                
-                <div class="field-group">
-                    <label>Fotos de la avería</label>
-                    <div class="upload-area">
-                        <input type="file" id="fotosEquipo" accept="image/*" multiple onchange="previewFotos(this)">
-                        <p>Añadir fotos</p>
-                    </div>
-                    <div class="upload-preview" id="previewContainer"></div>
+            </div>
+            <div class="odoo-grid full">
+                <div>
+                    <label class="field-label">Diagnóstico Técnico Detallado</label>
+                    <textarea id="x_studio_diagnstico_tcnico" rows="5"></textarea>
                 </div>
+            </div>
+            <div class="odoo-grid full">
+                <div>
+                    <label class="field-label">Fotos de Avería (Hasta 10)</label>
+                    <div class="photo-upload-area" onclick="document.getElementById('file_input').click()">
+                        📌 CLIC AQUÍ PARA AÑADIR FOTOS DEL EQUIPO
+                    </div>
+                    <input type="file" id="file_input" multiple accept="image/*" capture="environment" style="display:none">
+                    <div id="file_status" style="margin-top:10px; color:var(--odoo-orange); font-size:0.8rem; font-weight:bold;"></div>
+                </div>
+            </div>
+
+            <h3 class="section-title">VALIDACIÓN Y FIRMAS</h3>
+            <div class="odoo-grid">
+                <div>
+                    <label class="field-label">Técnico Asignado (Revisar)</label>
+                    <input type="text" id="x_studio_nombre_tecnico" required>
+                </div>
+                <div>
+                    <label class="field-label">Email Técnico (Revisar)</label>
+                    <input type="text" id="x_studio_tecnico_email" required>
+                </div>
+            </div>
+
+            <div class="signature-container">
+                <label class="field-label">Firma del Técnico (Obligatoria)</label>
+                <button type="button" class="btn-clear" onclick="pTec.clear()">Limpiar</button>
+                <div class="signature-box"><canvas id="canvas_tec"></canvas></div>
+            </div>
+
+            <div class="signature-container">
+                <label class="field-label">Firma del Cliente / Asegurado (Obligatoria)</label>
+                <button type="button" class="btn-clear" onclick="pCli.clear()">Limpiar</button>
+                <div class="signature-box"><canvas id="canvas_cli"></canvas></div>
             </div>
         </div>
 
-        <div class="section-card">
-            <div class="section-header"><span class="section-title">Validación y Firmas</span></div>
-            <div class="section-body">
-                <div class="datetime-row">
-                    <div class="field-group"><label>Nombre Técnico <span class="required">*</span></label><input type="text" id="tecnicoNombre" required></div>
-                    <div class="field-group"><label>Email Técnico <span class="required">*</span></label><input type="email" id="tecnicoEmail" required></div>
-                </div>
-                <div class="field-group">
-                    <label>Firma del Técnico <span class="required">*</span></label>
-                    <div class="firma-container">
-                        <div class="firma-header"><span>Técnico</span><button type="button" class="btn-clear" onclick="clearCanvas('firmaTecnico')">Borrar</button></div>
-                        <canvas id="firmaTecnico"></canvas>
-                    </div>
-                </div>
-                <div class="field-group">
-                    <label>Firma del Cliente / Asegurado</label>
-                    <div class="firma-container">
-                        <div class="firma-header"><span>Cliente</span><button type="button" class="btn-clear" onclick="clearCanvas('firmaCliente')">Borrar</button></div>
-                        <canvas id="firmaCliente"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-submit" id="btnSubmit">Enviar Acta</button>
+        <button type="submit" id="submitBtn" class="btn-submit">FINALIZAR Y ENVIAR ACTA A ODOO</button>
     </form>
 </div>
 
-<div class="success-overlay" id="successOverlay">
-    <div class="success-card"><h2>✅ ¡Enviado!</h2><button class="btn-submit" onclick="location.reload()">Nueva Acta</button></div>
-</div>
-
 <script>
-// 1. PRECARGA DESDE URL (INCLUYE ELECTRODOMÉSTICO)
-(function() {
-    const p = new URLSearchParams(window.location.search);
-    const m = {
-        'cardId':'id_op', 'nombreAsegurado':'nombre', 'dni':'dni',
-        'telefono':'telefono', 'domicilio':'direccion',
-        'fechaVisita':'fecha', 'horaVisita':'hora',
-        'tecnicoNombre':'tecnico_nombre', 'tecnicoEmail':'tecnico_email',
-        // NUEVOS CAMPOS EQUIPO
-        'electrodomestico':'equipo', 'marca':'marca', 'modelo':'modelo',
-        'numSerie':'serie', 'antiguedad':'antiguedad'
+    const urlParams = new URLSearchParams(window.location.search);
+    const resId = urlParams.get('id');
+    const WEBHOOK_URL = "https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica";
+
+    // CARGA DE DATOS DESDE ODOO VIA N8N GET
+    window.onload = async () => {
+        document.getElementById('x_studio_fecha_emisin').value = new Date().toISOString().split('T')[0];
+        if (!resId) { document.getElementById('loader').innerHTML = "<h1>ERROR: ID NO ENCONTRADO</h1>"; return; }
+        document.getElementById('res_id').value = resId;
+        document.getElementById('display_id').value = resId;
+
+        try {
+            const resp = await fetch(`${WEBHOOK_URL}?id=${resId}`);
+            const data = await resp.json();
+            
+            // Precarga de campos bloqueados
+            document.getElementById('cliente_nombre').value = data.partner_name || data.contact_name || '';
+            document.getElementById('x_studio_dninif').value = data.x_studio_dninif || '';
+            document.getElementById('telefono').value = data.phone || '';
+            document.getElementById('domicilio').value = data.street || '';
+            
+            // Precarga de campos editables (Nombre/Email del técnico)
+            document.getElementById('x_studio_nombre_tecnico').value = data.x_studio_nombre_tecnico || '';
+            document.getElementById('x_studio_tecnico_email').value = data.x_studio_tecnico_email || '';
+            
+            // Precarga de Electrodoméstico y Marca si existen
+            document.getElementById('x_studio_electrodomstico').value = data.x_studio_electrodomstico || '';
+            document.getElementById('x_studio_marca').value = data.x_studio_marca || '';
+            
+            document.getElementById('loader').style.display = 'none';
+        } catch (e) { document.getElementById('loader').innerHTML = "<h1>ERROR DE CONEXIÓN CON ODOO</h1>"; }
     };
-    for(let id in m) { if(p.get(m[id])) document.getElementById(id).value = decodeURIComponent(p.get(m[id])); }
-})();
 
-// 2. FOTOS
-function previewFotos(input) {
-    const container = document.getElementById('previewContainer');
-    container.innerHTML = '';
-    Array.from(input.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'preview-thumb';
-            container.appendChild(img);
+    const pTec = new SignaturePad(document.getElementById('canvas_tec'));
+    const pCli = new SignaturePad(document.getElementById('canvas_cli'));
+
+    // PROCESAR HASTA 10 FOTOS
+    const photoData = [];
+    document.getElementById('file_input').onchange = function(e) {
+        const files = Array.from(e.target.files).slice(0, 10);
+        photoData.length = 0;
+        files.forEach((file, i) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                photoData.push({ name: `foto_averia_${i+1}.jpg`, base64: ev.target.result.split(',')[1] });
+                document.getElementById('file_status').innerText = `✅ ${photoData.length} FOTOS CARGADAS`;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    // ENVÍO DE DATOS A ODOO VIA N8N POST
+    document.getElementById('visitaForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; btn.innerText = "ENVIANDO DATOS A ODOO...";
+
+        if (pTec.isEmpty() || pCli.isEmpty()) {
+            alert("Ambas firmas son obligatorias para la validez legal del acta.");
+            btn.disabled = false; btn.innerText = "FINALIZAR Y ENVIAR ACTA A ODOO";
+            return;
+        }
+
+        const payload = {
+            id: resId,
+            // Visita
+            x_studio_fecha_emisin: document.getElementById('x_studio_fecha_emisin').value,
+            // Equipo
+            x_studio_electrodomstico: document.getElementById('x_studio_electrodomstico').value,
+            x_studio_marca: document.getElementById('x_studio_marca').value,
+            x_studio_modelo: document.getElementById('x_studio_modelo').value,
+            x_studio_nmero_de_serie: document.getElementById('x_studio_nmero_de_serie').value,
+            x_studio_antiguedad: document.getElementById('x_studio_antiguedad').value,
+            x_studio_uso_desgaste: document.getElementById('x_studio_uso_desgaste').value,
+            // Diagnóstico
+            x_studio_tipo_de_averia: document.getElementById('x_studio_tipo_de_averia').value,
+            x_studio_diagnstico_tcnico: document.getElementById('x_studio_diagnstico_tcnico').value,
+            // Técnico y Binarios
+            x_studio_nombre_tecnico: document.getElementById('x_studio_nombre_tecnico').value,
+            x_studio_tecnico_email: document.getElementById('x_studio_tecnico_email').value,
+            x_studio_firma_tecnico: pTec.toDataURL().split(',')[1],
+            x_studio_firma_cliente: pCli.toDataURL().split(',')[1], // Campo Odoo Studio 'cliente' (Firma)
+            fotos: photoData
         };
-        reader.readAsDataURL(file);
-    });
-}
 
-// 3. FIRMAS
-function initCanvas(id) {
-    const canvas = document.getElementById(id); const ctx = canvas.getContext('2d');
-    canvas.width = canvas.offsetWidth; canvas.height = 140;
-    let drawing = false;
-    const pos = e => { const r = canvas.getBoundingClientRect(); const t = e.touches?e.touches[0]:e; return [t.clientX-r.left, t.clientY-r.top]; };
-    canvas.addEventListener('mousedown', e => { drawing=true; ctx.beginPath(); ctx.moveTo(...pos(e)); });
-    canvas.addEventListener('mousemove', e => { if(drawing){ ctx.lineTo(...pos(e)); ctx.stroke(); } });
-    window.addEventListener('mouseup', () => drawing=false);
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            if(response.ok) {
+                alert("Acta sincronizada correctamente en Odoo.");
+                window.location.reload();
+            } else { alert("Odoo rechazó los datos."); btn.disabled = false; btn.innerText = "FINALIZAR Y ENVIAR"; }
+        } catch (err) { alert("Error de red."); btn.disabled = false; }
+    };
+</script>
+</body>
+</html>
