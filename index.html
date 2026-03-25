@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACTA DE VISITA TÉCNICA</title>
+    <title>ACTA DE VISITA TÉCNICA - Electrodomésticos Mariana</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,144 +12,443 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DM Sans', sans-serif; background: #F0F2F8; padding: 24px 16px; color: #111827; }
-        .form-wrapper { max-width: 680px; margin: 0 auto; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+        .form-wrapper { max-width: 900px; margin: 0 auto; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
         .form-header { background: var(--navy); color: var(--white); padding: 28px; border-top: 8px solid var(--orange); }
+        .form-header h1 { font-size: 24px; margin-bottom: 8px; }
         .section-card { padding: 24px 28px; border-bottom: 1px solid var(--border); }
         .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; color: var(--navy); display: flex; align-items: center; gap: 8px; }
         .field-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 13px; font-weight: 500; color: #4B5563; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
+        .required::after { content: " *"; color: var(--orange); }
+        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232, 80, 10, 0.1); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .grid-full { grid-column: 1 / -1; }
         .firma-container { border: 1px solid var(--border); background: #FAFAFA; border-radius: 8px; margin-top: 8px; }
-        canvas { width: 100%; height: 140px; cursor: crosshair; touch-action: none; background: #fff; }
+        canvas { width: 100%; height: 140px; cursor: crosshair; touch-action: none; background: #fff; display: block; }
+        .btn-clear { background: #f3f4f6; color: #374151; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; margin-top: 8px; }
+        .btn-clear:hover { background: #e5e7eb; }
         .btn-submit { width: 100%; background: var(--orange); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-submit:hover { background: #C93D00; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
         .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 1000; color: white; text-align: center; }
         .success-overlay.show { display: flex; }
+        .error-message { color: var(--orange); font-size: 12px; margin-top: 4px; display: none; }
+        .error-message.show { display: block; }
+        .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
+        .file-input-label { display: inline-block; padding: 10px; background: #f3f4f6; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center; width: 100%; }
+        .file-input-label:hover { background: #e5e7eb; }
+        .file-input-wrapper input[type="file"] { display: none; }
+        .file-name { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        @media (max-width: 768px) {
+            .grid, .grid-3 { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <div class="form-wrapper">
     <div class="form-header">
-        <h1>ACTA DE VISITA TÉCNICA</h1>
-        <p style="opacity: 0.7; font-size: 13px;">Electrodomésticos Mariana SL</p>
+        <h1>⚙️ ACTA DE VISITA TÉCNICA</h1>
+        <p style="opacity: 0.7; font-size: 13px; margin: 0;">Electrodomésticos Mariana SL</p>
     </div>
 
     <form id="mainForm">
+        <!-- SECCIÓN 1: DATOS DE LA OPORTUNIDAD -->
         <div class="section-card">
-            <div class="section-title">📋 Datos de la Visita</div>
+            <div class="section-title">📋 DATOS DE LA OPORTUNIDAD</div>
             <div class="grid">
                 <div class="field-group">
-                    <label>ID Oportunidad *</label>
-                    <input type="text" id="cardId" name="id_op" required>
+                    <label class="required">ID Oportunidad</label>
+                    <input type="text" id="id_op" name="id_op" required>
+                    <span class="error-message" id="error_id_op">Este campo es requerido</span>
                 </div>
                 <div class="field-group">
                     <label>Nombre del Asegurado</label>
-                    <input type="text" id="nombreAsegurado">
+                    <input type="text" id="nombre_asegurado" name="nombre_asegurado">
                 </div>
             </div>
         </div>
 
+        <!-- SECCIÓN 2: DATOS DEL CLIENTE -->
         <div class="section-card">
-            <div class="section-title">🏠 Equipo y Avería</div>
+            <div class="section-title">👤 DATOS DEL ASEGURADO / CLIENTE</div>
             <div class="grid">
                 <div class="field-group">
-                    <label>Marca</label>
-                    <input type="text" id="marca">
+                    <label>DNI / NIF</label>
+                    <input type="text" id="dni" name="dni">
                 </div>
                 <div class="field-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: DATOS DEL ELECTRODOMÉSTICO -->
+        <div class="section-card">
+            <div class="section-title">🏠 DATOS DEL ELECTRODOMÉSTICO</div>
+            <div class="grid">
+                <div class="field-group">
+                    <label>Tipo de Electrodoméstico</label>
+                    <input type="text" id="electrodomestico" name="electrodomestico" placeholder="Ej: Lavadora, Frigorífico, Horno...">
+                </div>
+                <div class="field-group">
+                    <label>Marca</label>
+                    <input type="text" id="marca" name="marca">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="field-group">
                     <label>Modelo</label>
-                    <input type="text" id="modelo">
+                    <input type="text" id="modelo" name="modelo">
+                </div>
+                <div class="field-group">
+                    <label>Nº de Serie</label>
+                    <input type="text" id="serie" name="serie">
                 </div>
             </div>
             <div class="field-group">
-                <label>Diagnóstico Técnico *</label>
-                <textarea id="diagnostico" rows="4" required></textarea>
+                <label>Antigüedad (Años aproximados)</label>
+                <input type="number" id="antiguedad" name="antiguedad" min="0" step="0.5">
             </div>
         </div>
 
+        <!-- SECCIÓN 4: AVERÍA Y DIAGNÓSTICO -->
         <div class="section-card">
-            <div class="section-title">✍️ Firmas de Conformidad</div>
-            <label>Firma del Técnico</label>
-            <div class="firma-container"><canvas id="firmaTecnico"></canvas></div>
-            <br>
-            <label>Firma del Cliente</label>
-            <div class="firma-container"><canvas id="firmaCliente"></canvas></div>
+            <div class="section-title">🔧 AVERÍA Y DIAGNÓSTICO</div>
+            <div class="field-group">
+                <label>Tipo de Avería</label>
+                <select id="averia" name="averia">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="No funciona">No funciona</option>
+                    <option value="Funciona parcialmente">Funciona parcialmente</option>
+                    <option value="Ruido extraño">Ruido extraño</option>
+                    <option value="Fugas">Fugas</option>
+                    <option value="Problemas eléctricos">Problemas eléctricos</option>
+                    <option value="Otros">Otros</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>Si seleccionó "Otros", especifique:</label>
+                <input type="text" id="averia_otros" name="averia_otros">
+            </div>
+            <div class="field-group">
+                <label class="required">Diagnóstico Técnico</label>
+                <textarea id="diagnostico" name="diagnostico" rows="4" required placeholder="Describe detalladamente el diagnóstico y los trabajos realizados..."></textarea>
+                <span class="error-message" id="error_diagnostico">Este campo es requerido</span>
+            </div>
+            <div class="field-group">
+                <label>Observaciones Adicionales</label>
+                <textarea id="observaciones" name="observaciones" rows="3" placeholder="Notas adicionales, recomendaciones..."></textarea>
+            </div>
         </div>
 
+        <!-- SECCIÓN 5: DATOS DEL TÉCNICO -->
+        <div class="section-card">
+            <div class="section-title">👨‍🔧 DATOS DEL TÉCNICO</div>
+            <div class="field-group">
+                <label>Nombre del Técnico</label>
+                <input type="text" id="tecnico" name="tecnico">
+            </div>
+            <div class="field-group">
+                <label>Email del Técnico</label>
+                <input type="email" id="email_tecnico" name="email_tecnico">
+            </div>
+        </div>
+
+        <!-- SECCIÓN 6: FIRMAS DE CONFORMIDAD -->
+        <div class="section-card">
+            <div class="section-title">✍️ FIRMAS DE CONFORMIDAD</div>
+            
+            <label style="font-weight: 600; margin-bottom: 12px; display: block;">Firma del Técnico</label>
+            <div class="firma-container"><canvas id="firma_tecnico"></canvas></div>
+            <button type="button" class="btn-clear" onclick="limpiarFirma('firma_tecnico')">Limpiar firma</button>
+            
+            <br><br>
+            
+            <label style="font-weight: 600; margin-bottom: 12px; display: block;">Firma del Cliente</label>
+            <div class="firma-container"><canvas id="firma_cliente"></canvas></div>
+            <button type="button" class="btn-clear" onclick="limpiarFirma('firma_cliente')">Limpiar firma</button>
+        </div>
+
+        <!-- SECCIÓN 7: ARCHIVOS MULTIMEDIA -->
+        <div class="section-card">
+            <div class="section-title">📸 ARCHIVOS MULTIMEDIA</div>
+            
+            <div class="field-group">
+                <label>Foto de la Avería (opcional)</label>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="foto_averia">
+                        📷 Seleccionar foto
+                    </label>
+                    <input type="file" id="foto_averia" name="foto_averia" accept="image/*">
+                    <div class="file-name" id="foto_averia_name"></div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>Foto 2 (opcional)</label>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="foto_2">
+                        📷 Seleccionar foto
+                    </label>
+                    <input type="file" id="foto_2" name="foto_2" accept="image/*">
+                    <div class="file-name" id="foto_2_name"></div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>Foto 3 (opcional)</label>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="foto_3">
+                        📷 Seleccionar foto
+                    </label>
+                    <input type="file" id="foto_3" name="foto_3" accept="image/*">
+                    <div class="file-name" id="foto_3_name"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTÓN DE ENVÍO -->
         <div style="padding: 24px;">
-            <button type="submit" class="btn-submit" id="btnSubmit">Enviar a Odoo</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">📤 Enviar a Odoo</button>
         </div>
     </form>
 </div>
 
 <div class="success-overlay" id="successOverlay">
     <div>
-        <h1 style="font-size: 50px;">✅</h1>
-        <h2>¡ENVIADO CON ÉXITO!</h2>
-        <p>Los datos han llegado a n8n correctamente.</p>
-        <button onclick="location.reload()" style="margin-top:20px; padding: 10px 20px; border-radius: 8px; border:none; cursor:pointer;">Nueva Acta</button>
+        <h1 style="font-size: 60px; margin-bottom: 20px;">✅</h1>
+        <h2 style="font-size: 28px; margin-bottom: 10px;">¡ENVIADO CON ÉXITO!</h2>
+        <p style="font-size: 16px; margin-bottom: 30px; opacity: 0.9;">Los datos han sido registrados en Odoo correctamente.</p>
+        <button onclick="location.reload()" style="margin-top: 20px; padding: 12px 30px; border-radius: 8px; border: none; cursor: pointer; background: var(--orange); color: white; font-weight: 600; font-size: 14px;">Nueva Acta</button>
     </div>
 </div>
 
 <script>
-// --- 1. LÓGICA DE AUTOCOMPLETADO (URL) ---
+// ============================================
+// 1. AUTOCOMPLETADO DESDE URL
+// ============================================
 (function() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('id_op')) document.getElementById('cardId').value = params.get('id_op');
-    if (params.get('nombre')) document.getElementById('nombreAsegurado').value = params.get('nombre');
+    if (params.get('id_op')) document.getElementById('id_op').value = params.get('id_op');
+    if (params.get('nombre')) document.getElementById('nombre_asegurado').value = params.get('nombre');
+    if (params.get('dni')) document.getElementById('dni').value = params.get('dni');
+    if (params.get('telefono')) document.getElementById('telefono').value = params.get('telefono');
 })();
 
-// --- 2. CONFIGURACIÓN DE FIRMAS ---
+// ============================================
+// 2. MANEJO DE ARCHIVOS
+// ============================================
+['foto_averia', 'foto_2', 'foto_3'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+        input.addEventListener('change', function(e) {
+            const fileName = this.files[0]?.name || '';
+            document.getElementById(id + '_name').textContent = fileName ? `✓ ${fileName}` : '';
+        });
+    }
+});
+
+// ============================================
+// 3. FIRMA - INICIALIZACIÓN
+// ============================================
 function initFirma(id) {
     const canvas = document.getElementById(id);
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     let drawing = false;
+    
+    // Establecer tamaño real del canvas
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1A1F36';
+    
     const getPos = (e) => {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         return [clientX - rect.left, clientY - rect.top];
     };
-    const start = (e) => { drawing = true; ctx.beginPath(); const [x,y] = getPos(e); ctx.moveTo(x,y); };
-    const move = (e) => { if(!drawing) return; const [x,y] = getPos(e); ctx.lineTo(x,y); ctx.stroke(); };
-    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); });
+    
+    const start = (e) => {
+        drawing = true;
+        ctx.beginPath();
+        const [x, y] = getPos(e);
+        ctx.moveTo(x, y);
+    };
+    
+    const move = (e) => {
+        if (!drawing) return;
+        const [x, y] = getPos(e);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    };
+    
+    const stop = () => {
+        drawing = false;
+        ctx.closePath();
+    };
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', stop);
+    canvas.addEventListener('mouseout', stop);
+    
+    // Touch events
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        start(e);
+    });
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        move(e);
+    });
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stop();
+    });
 }
-initFirma('firmaTecnico'); initFirma('firmaCliente');
 
-// --- 3. ENVÍO A N8N (EL CABLEADO DINÁMICO) ---
+function limpiarFirma(id) {
+    const canvas = document.getElementById(id);
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// Inicializar firmas
+initFirma('firma_tecnico');
+initFirma('firma_cliente');
+
+// ============================================
+// 4. CONVERSIÓN DE ARCHIVOS A BASE64
+// ============================================
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// ============================================
+// 5. VALIDACIÓN DEL FORMULARIO
+// ============================================
+function validarFormulario() {
+    let valido = true;
+    
+    // Validar campos requeridos
+    const id_op = document.getElementById('id_op').value.trim();
+    const diagnostico = document.getElementById('diagnostico').value.trim();
+    
+    if (!id_op) {
+        document.getElementById('error_id_op').classList.add('show');
+        valido = false;
+    } else {
+        document.getElementById('error_id_op').classList.remove('show');
+    }
+    
+    if (!diagnostico) {
+        document.getElementById('error_diagnostico').classList.add('show');
+        valido = false;
+    } else {
+        document.getElementById('error_diagnostico').classList.remove('show');
+    }
+    
+    return valido;
+}
+
+// ============================================
+// 6. ENVÍO A N8N
+// ============================================
 document.getElementById('mainForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    if (!validarFormulario()) {
+        alert('Por favor, completa los campos requeridos');
+        return;
+    }
+    
     const btn = document.getElementById('btnSubmit');
-    btn.innerText = "ENVIANDO..."; btn.disabled = true;
-
-    const payload = {
-        id_op: document.getElementById('cardId').value,
-        nombre: document.getElementById('nombreAsegurado').value,
-        marca: document.getElementById('marca').value,
-        modelo: document.getElementById('modelo').value,
-        diagnostico: document.getElementById('diagnostico').value,
-        firma_tecnico: document.getElementById('firmaTecnico').toDataURL(),
-        firma_cliente: document.getElementById('firmaCliente').toDataURL()
-    };
-
+    btn.innerText = "⏳ ENVIANDO...";
+    btn.disabled = true;
+    
     try {
+        // Recopilar datos de formulario
+        const payload = {
+            id_op: document.getElementById('id_op').value,
+            nombre_asegurado: document.getElementById('nombre_asegurado').value,
+            dni: document.getElementById('dni').value,
+            telefono: document.getElementById('telefono').value,
+            electrodomestico: document.getElementById('electrodomestico').value,
+            marca: document.getElementById('marca').value,
+            modelo: document.getElementById('modelo').value,
+            serie: document.getElementById('serie').value,
+            antiguedad: document.getElementById('antiguedad').value,
+            averia: document.getElementById('averia').value,
+            averia_otros: document.getElementById('averia_otros').value,
+            diagnostico: document.getElementById('diagnostico').value,
+            observaciones: document.getElementById('observaciones').value,
+            tecnico: document.getElementById('tecnico').value,
+            email_tecnico: document.getElementById('email_tecnico').value,
+            firma_tecnico: document.getElementById('firma_tecnico').toDataURL(),
+            firma_cliente: document.getElementById('firma_cliente').toDataURL(),
+        };
+        
+        // Procesar archivos
+        const archivos = ['foto_averia', 'foto_2', 'foto_3'];
+        for (const id of archivos) {
+            const input = document.getElementById(id);
+            if (input && input.files[0]) {
+                payload[id] = await fileToBase64(input.files[0]);
+            }
+        }
+        
+        // Enviar a webhook n8n
         const response = await fetch('https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (response.ok) document.getElementById('successOverlay').classList.add('show');
-        else alert("n8n recibió el ID pero hubo un error procesando.");
+        
+        if (response.ok) {
+            document.getElementById('successOverlay').classList.add('show');
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            alert(`Error: ${response.status} - ${errorData.message || 'Error desconocido en n8n'}`);
+            btn.innerText = "📤 Enviar a Odoo";
+            btn.disabled = false;
+        }
     } catch (err) {
-        alert("Error de conexión. Revisa que el Webhook de n8n esté activo.");
+        console.error('Error:', err);
+        alert(`Error de conexión: ${err.message}\n\nVerifica que el webhook de n8n esté activo.`);
+        btn.innerText = "📤 Enviar a Odoo";
+        btn.disabled = false;
     }
-    btn.innerText = "Enviar a Odoo"; btn.disabled = false;
+});
+
+// Auto-resize del canvas cuando se redimensiona la ventana
+window.addEventListener('resize', () => {
+    const firmaTecnico = document.getElementById('firma_tecnico');
+    const firmaCliente = document.getElementById('firma_cliente');
+    
+    if (firmaTecnico && firmaCliente) {
+        firmaTecnico.width = firmaTecnico.offsetWidth;
+        firmaCliente.width = firmaCliente.offsetWidth;
+    }
 });
 </script>
+
 </body>
 </html>
