@@ -1,32 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head><title>Prueba Fase 1 - Lectura</title></head>
+<head>
+    <title>Acta de Visita Técnica</title>
+    <style>
+        canvas { border: 1px solid #000; background: #fff; }
+        .campo { margin-bottom: 15px; }
+    </style>
+</head>
 <body>
-    <h2>Validación de Envío a n8n</h2>
-    <form id="testForm">
+    <h2>Acta de Visita Técnica</h2>
+    
+    <div class="campo">
         <label>ID Oportunidad:</label><br>
-        <input type="text" name="id_op" value="183"><br><br>
-        
-        <label>DNI Asegurado:</label><br>
-        <input type="text" name="dni" value="12345678X"><br><br>
-        
-        <label>Teléfono:</label><br>
-        <input type="text" name="tel" value="600000000"><br><br>
+        <input type="text" id="id_op" value="183">
+    </div>
 
-        <button type="button" onclick="probarConexion()">Enviar Prueba</button>
-    </form>
+    <div class="campo">
+        <label>DNI Asegurado:</label><br>
+        <input type="text" id="dni" value="12345678X">
+    </div>
+
+    <div class="campo">
+        <label>Teléfono:</label><br>
+        <input type="text" id="telefono" value="600000000">
+    </div>
+
+    <div class="campo">
+        <label>Diagnóstico Técnico:</label><br>
+        <textarea id="diagnostico">Equipo revisado, requiere cambio de pieza.</textarea>
+    </div>
+
+    <div class="campo">
+        <label>Firma Técnico (Canvas):</label><br>
+        <canvas id="canvasTecnico" width="300" height="100"></canvas>
+    </div>
+
+    <div class="campo">
+        <label>Firma Cliente (Canvas):</label><br>
+        <canvas id="canvasCliente" width="300" height="100"></canvas>
+    </div>
+
+    <button type="button" onclick="enviarAlWebhook()">Finalizar y Enviar a Odoo</button>
 
     <script>
-        function probarConexion() {
-            const form = document.getElementById('testForm');
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData).toString();
-            
-            // Reemplaza con tu URL de Webhook de prueba
-            const url = "https://n8n.srv1077755.hstgr.cloud/webhook-test/acta-visita-tecnica?" + params;
-            
-            console.log("Enviando a:", url);
-            window.open(url, '_blank');
+        async function enviarAlWebhook() {
+            // Referencias a los canvas para obtener la imagen
+            const canvasTecnico = document.getElementById('canvasTecnico');
+            const canvasCliente = document.getElementById('canvasCliente');
+
+            // 1. Construcción del paquete de datos (Payload)
+            const payload = {
+                id_op: document.getElementById('id_op').value,
+                dni: document.getElementById('dni').value,
+                telefono: document.getElementById('telefono').value,
+                diagnostico: document.getElementById('diagnostico').value,
+                // Extraemos solo el código base64 de la imagen
+                x_studio_firma_tecnico: canvasTecnico.toDataURL('image/png').split(',')[1],
+                x_studio_firma_cliente: canvasCliente.toDataURL('image/png').split(',')[1]
+            };
+
+            console.log("Enviando paquete a n8n...", payload);
+
+            // 2. Envío mediante POST (Necesario para firmas)
+            try {
+                const response = await fetch('https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    alert("¡Conexión exitosa! Datos enviados a n8n.");
+                } else {
+                    alert("Error en el servidor n8n. Verifica el Webhook.");
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("No se pudo conectar con n8n. Revisa el CORS.");
+            }
         }
     </script>
 </body>
