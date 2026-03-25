@@ -1,47 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACTA DE VISITA TÉCNICA</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #E8500A; --navy: #1A1F36; --white: #FFFFFF;
+            --border: #E5E7EB; --radius: 12px; --shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: #F0F2F8; padding: 24px 16px; color: #111827; }
+        .form-wrapper { max-width: 680px; margin: 0 auto; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+        .form-header { background: var(--navy); color: var(--white); padding: 28px; border-top: 8px solid var(--orange); }
+        .section-card { padding: 24px 28px; border-bottom: 1px solid var(--border); }
+        .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .field-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 13px; font-weight: 500; color: #4B5563; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .firma-container { border: 1px solid var(--border); background: #FAFAFA; border-radius: 8px; margin-top: 8px; }
+        canvas { width: 100%; height: 140px; cursor: crosshair; touch-action: none; background: #fff; }
+        .btn-submit { width: 100%; background: var(--orange); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-submit:hover { background: #C93D00; }
+        .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 1000; color: white; text-align: center; }
+        .success-overlay.show { display: flex; }
+    </style>
+</head>
 <body>
+
 <div class="form-wrapper">
     <div class="form-header">
-        <div class="header-accent"></div>
-        <div class="header-content">
-            <div class="logo-circle">🔧</div>
-            <div class="header-text">
-                <h1>ACTA DE VISITA TÉCNICA</h1>
-                <p>Electrodomésticos Mariana SL · Impulsamos</p>
-            </div>
-        </div>
+        <h1>ACTA DE VISITA TÉCNICA</h1>
+        <p style="opacity: 0.7; font-size: 13px;">Electrodomésticos Mariana SL</p>
     </div>
 
     <form id="mainForm">
-        <div class="submit-area">
-            <button type="submit" class="btn-submit" id="btnSubmit">Enviar Acta</button>
+        <div class="section-card">
+            <div class="section-title">📋 Datos de la Visita</div>
+            <div class="grid">
+                <div class="field-group">
+                    <label>ID Oportunidad *</label>
+                    <input type="text" id="cardId" name="id_op" required>
+                </div>
+                <div class="field-group">
+                    <label>Nombre del Asegurado</label>
+                    <input type="text" id="nombreAsegurado">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">🏠 Equipo y Avería</div>
+            <div class="grid">
+                <div class="field-group">
+                    <label>Marca</label>
+                    <input type="text" id="marca">
+                </div>
+                <div class="field-group">
+                    <label>Modelo</label>
+                    <input type="text" id="modelo">
+                </div>
+            </div>
+            <div class="field-group">
+                <label>Diagnóstico Técnico *</label>
+                <textarea id="diagnostico" rows="4" required></textarea>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">✍️ Firmas de Conformidad</div>
+            <label>Firma del Técnico</label>
+            <div class="firma-container"><canvas id="firmaTecnico"></canvas></div>
+            <br>
+            <label>Firma del Cliente</label>
+            <div class="firma-container"><canvas id="firmaCliente"></canvas></div>
+        </div>
+
+        <div style="padding: 24px;">
+            <button type="submit" class="btn-submit" id="btnSubmit">Enviar a Odoo</button>
         </div>
     </form>
 </div>
 
+<div class="success-overlay" id="successOverlay">
+    <div>
+        <h1 style="font-size: 50px;">✅</h1>
+        <h2>¡ENVIADO CON ÉXITO!</h2>
+        <p>Los datos han llegado a n8n correctamente.</p>
+        <button onclick="location.reload()" style="margin-top:20px; padding: 10px 20px; border-radius: 8px; border:none; cursor:pointer;">Nueva Acta</button>
+    </div>
+</div>
+
 <script>
-// 1. Evitar que el formulario se rompa si falta algún campo en la URL
+// --- 1. LÓGICA DE AUTOCOMPLETADO (URL) ---
 (function() {
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const set = (id, key) => {
-            const el = document.getElementById(id);
-            if (el && params.get(key)) el.value = decodeURIComponent(params.get(key));
-        };
-        set('cardId', 'id_op');
-        set('nombreAsegurado', 'nombre');
-    } catch (e) { console.error("Error en pre-fill:", e); }
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('id_op')) document.getElementById('cardId').value = params.get('id_op');
+    if (params.get('nombre')) document.getElementById('nombreAsegurado').value = params.get('nombre');
 })();
 
-// 2. Envío seguro a n8n
-document.getElementById('mainForm').addEventListener('submit', async function(e) {
+// --- 2. CONFIGURACIÓN DE FIRMAS ---
+function initFirma(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return [clientX - rect.left, clientY - rect.top];
+    };
+    const start = (e) => { drawing = true; ctx.beginPath(); const [x,y] = getPos(e); ctx.moveTo(x,y); };
+    const move = (e) => { if(!drawing) return; const [x,y] = getPos(e); ctx.lineTo(x,y); ctx.stroke(); };
+    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); });
+}
+initFirma('firmaTecnico'); initFirma('firmaCliente');
+
+// --- 3. ENVÍO A N8N (EL CABLEADO DINÁMICO) ---
+document.getElementById('mainForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btnSubmit');
-    btn.innerText = "Enviando...";
+    btn.innerText = "ENVIANDO..."; btn.disabled = true;
 
     const payload = {
         id_op: document.getElementById('cardId').value,
+        nombre: document.getElementById('nombreAsegurado').value,
+        marca: document.getElementById('marca').value,
+        modelo: document.getElementById('modelo').value,
         diagnostico: document.getElementById('diagnostico').value,
-        // Agrega aquí los demás campos que necesites
+        firma_tecnico: document.getElementById('firmaTecnico').toDataURL(),
+        firma_cliente: document.getElementById('firmaCliente').toDataURL()
     };
 
     try {
@@ -50,11 +143,13 @@ document.getElementById('mainForm').addEventListener('submit', async function(e)
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (response.ok) alert("¡Enviado con éxito!");
+        if (response.ok) document.getElementById('successOverlay').classList.add('show');
+        else alert("n8n recibió el ID pero hubo un error procesando.");
     } catch (err) {
-        alert("Error de conexión. Revisa el Webhook.");
+        alert("Error de conexión. Revisa que el Webhook de n8n esté activo.");
     }
-    btn.innerText = "Enviar Acta";
+    btn.innerText = "Enviar a Odoo"; btn.disabled = false;
 });
 </script>
 </body>
+</html>
