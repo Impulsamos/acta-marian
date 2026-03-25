@@ -3,8 +3,12 @@
 <head>
     <title>Acta de Visita Técnica</title>
     <style>
-        canvas { border: 1px solid #000; background: #fff; }
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+        canvas { border: 2px solid #333; background: #fff; cursor: crosshair; border-radius: 8px; }
         .campo { margin-bottom: 15px; }
+        input, textarea { width: 100%; max-width: 300px; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
     </style>
 </head>
 <body>
@@ -31,52 +35,75 @@
     </div>
 
     <div class="campo">
-        <label>Firma Técnico (Canvas):</label><br>
-        <canvas id="canvasTecnico" width="300" height="100"></canvas>
+        <label>Firma Técnico:</label><br>
+        <canvas id="canvasTecnico" width="300" height="150"></canvas>
     </div>
 
     <div class="campo">
-        <label>Firma Cliente (Canvas):</label><br>
-        <canvas id="canvasCliente" width="300" height="100"></canvas>
+        <label>Firma Cliente:</label><br>
+        <canvas id="canvasCliente" width="300" height="150"></canvas>
     </div>
 
     <button type="button" onclick="enviarAlWebhook()">Finalizar y Enviar a Odoo</button>
 
     <script>
-        async function enviarAlWebhook() {
-            // Referencias a los canvas para obtener la imagen
-            const canvasTecnico = document.getElementById('canvasTecnico');
-            const canvasCliente = document.getElementById('canvasCliente');
+        // --- MOTOR DE DIBUJO ---
+        function configurarCanvas(id) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext('2d');
+            let dibujando = false;
 
-            // 1. Construcción del paquete de datos (Payload)
+            canvas.addEventListener('mousedown', () => dibujando = true);
+            canvas.addEventListener('mouseup', () => { dibujando = false; ctx.beginPath(); });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!dibujando) return;
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = "#000";
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX, e.offsetY);
+            });
+        }
+
+        configurarCanvas('canvasTecnico');
+        configurarCanvas('canvasCliente');
+
+        // --- MOTOR DE ENVÍO (El Cerebro) ---
+        async function enviarAlWebhook() {
+            const btn = document.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
+
             const payload = {
                 id_op: document.getElementById('id_op').value,
                 dni: document.getElementById('dni').value,
                 telefono: document.getElementById('telefono').value,
                 diagnostico: document.getElementById('diagnostico').value,
-                // Extraemos solo el código base64 de la imagen
-                x_studio_firma_tecnico: canvasTecnico.toDataURL('image/png').split(',')[1],
-                x_studio_firma_cliente: canvasCliente.toDataURL('image/png').split(',')[1]
+                // Extraemos el Base64 de las firmas para el nodo Convert to Base-64 de n8n
+                x_studio_firma_tecnico: document.getElementById('canvasTecnico').toDataURL('image/png').split(',')[1],
+                x_studio_firma_cliente: document.getElementById('canvasCliente').toDataURL('image/png').split(',')[1]
             };
 
-            console.log("Enviando paquete a n8n...", payload);
-
-            // 2. Envío mediante POST (Necesario para firmas)
             try {
                 const response = await fetch('https://n8n.srv1077755.hstgr.cloud/webhook/acta-visita-tecnica', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                
+
                 if (response.ok) {
-                    alert("¡Conexión exitosa! Datos enviados a n8n.");
+                    alert("✅ Éxito: Datos y firmas enviados a n8n correctamente.");
                 } else {
-                    alert("Error en el servidor n8n. Verifica el Webhook.");
+                    alert("❌ Error: El servidor n8n recibió la llamada pero dio error.");
                 }
             } catch (error) {
-                console.error("Error de conexión:", error);
-                alert("No se pudo conectar con n8n. Revisa el CORS.");
+                console.error("Error:", error);
+                alert("❌ Error de Conexión: Verifica si activaste CORS en n8n.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Finalizar y Enviar a Odoo";
             }
         }
     </script>
