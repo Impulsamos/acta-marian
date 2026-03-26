@@ -717,7 +717,7 @@ canvas.sig-canvas {
         <div class="sig-wrap" id="sig-wrap-tec">
           <div class="sig-top">
             <span class="sig-label">Firma — Técnico</span>
-            <button type="button" class="sig-btn" onclick="clearSig('canvasTecnico','sig-wrap-tec','sig-status-tec','firmaTecSigned')">🗑 Borrar</button>
+            <button type="button" class="sig-btn" onclick="clearSig('canvasTecnico','sig-wrap-tec','sig-status-tec','tec')">🗑 Borrar</button>
           </div>
           <canvas id="canvasTecnico" class="sig-canvas" width="640" height="150"></canvas>
           <div class="sig-status" id="sig-status-tec">
@@ -734,7 +734,7 @@ canvas.sig-canvas {
         <div class="sig-wrap" id="sig-wrap-cli">
           <div class="sig-top">
             <span class="sig-label">Firma — Cliente / Asegurado</span>
-            <button type="button" class="sig-btn" onclick="clearSig('canvasCliente','sig-wrap-cli','sig-status-cli','firmaCliSigned')">🗑 Borrar</button>
+            <button type="button" class="sig-btn" onclick="clearSig('canvasCliente','sig-wrap-cli','sig-status-cli','cli')">🗑 Borrar</button>
           </div>
           <canvas id="canvasCliente" class="sig-canvas" width="640" height="150"></canvas>
           <div class="sig-status" id="sig-status-cli">
@@ -791,8 +791,7 @@ const CFG = {
 };
 
 // ── ESTADO ───────────────────────────────────────────────────
-let firmaTecSigned = false;
-let firmaCliSigned = false;
+const SIGNED = { tec: false, cli: false };
 let fotoBase64     = null;
 let fotoMime       = null;
 let fotoNombre     = null;
@@ -963,11 +962,11 @@ function validar(step) {
       document.getElementById('ferr-foto').classList.add('show');
       ok = false;
     }
-    if (!firmaTecSigned) {
+    if (!SIGNED.tec) {
       document.getElementById('ferr-firma-tec').classList.add('show');
       ok = false;
     }
-    if (!firmaCliSigned) {
+    if (!SIGNED.cli) {
       document.getElementById('ferr-firma-cli').classList.add('show');
       ok = false;
     }
@@ -980,19 +979,23 @@ function validar(step) {
 /* ═══════════════════════════════════════
    CANVAS — FIRMAS
 ═══════════════════════════════════════ */
-function initCanvas(id, wrapId, statusId, signedVar) {
+function initCanvas(id, wrapId, statusId, signedKey) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
   let drawing = false, lx = 0, ly = 0;
 
-  function resize() {
-    const r = canvas.getBoundingClientRect();
+  // Establecer tamaño una sola vez al iniciar — no volver a hacer resize
+  function setupCanvas() {
+    const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    canvas.width  = r.width  * dpr;
-    canvas.height = r.height * dpr;
-    ctx.scale(dpr, dpr);
+    // Solo configurar si el canvas está vacío (primera vez)
+    if (canvas.width === 0 || canvas.width !== Math.round(rect.width * dpr)) {
+      canvas.width  = Math.round(rect.width  * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.scale(dpr, dpr);
+    }
   }
-  resize();
+  setupCanvas();
 
   function pos(e) {
     const r = canvas.getBoundingClientRect();
@@ -1002,7 +1005,10 @@ function initCanvas(id, wrapId, statusId, signedVar) {
   }
 
   function start(e) {
-    e.preventDefault(); drawing = true;
+    e.preventDefault();
+    // Asegurar canvas configurado sin borrar contenido existente
+    if (canvas.width === 0) setupCanvas();
+    drawing = true;
     const p = pos(e); lx = p.x; ly = p.y;
     ctx.beginPath(); ctx.moveTo(lx, ly);
   }
@@ -1014,12 +1020,13 @@ function initCanvas(id, wrapId, statusId, signedVar) {
     ctx.beginPath(); ctx.moveTo(lx, ly);
     ctx.lineTo(p.x, p.y); ctx.stroke();
     lx = p.x; ly = p.y;
-    window[signedVar] = true;
+    SIGNED[signedKey] = true;
     document.getElementById(wrapId).classList.add('signed');
     const st = document.getElementById(statusId);
     st.className = 'sig-status ok';
     st.innerHTML = '<span class="sig-dot"></span> Firma capturada ✓';
-    const fe = document.getElementById(signedVar === 'firmaTecSigned' ? 'ferr-firma-tec' : 'ferr-firma-cli');
+    const feId = signedKey === 'tec' ? 'ferr-firma-tec' : 'ferr-firma-cli';
+    const fe = document.getElementById(feId);
     if (fe) fe.classList.remove('show');
   }
   function end(e) { e.preventDefault(); drawing = false; }
@@ -1033,10 +1040,10 @@ function initCanvas(id, wrapId, statusId, signedVar) {
   canvas.addEventListener('touchend',   end,   { passive: false });
 }
 
-function clearSig(canvasId, wrapId, statusId, signedVar) {
+function clearSig(canvasId, wrapId, statusId, signedKey) {
   const canvas = document.getElementById(canvasId);
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-  window[signedVar] = false;
+  SIGNED[signedKey] = false;
   document.getElementById(wrapId).classList.remove('signed');
   const st = document.getElementById(statusId);
   st.className = 'sig-status';
@@ -1197,8 +1204,8 @@ function nuevaVisita() {
     e.classList.add('vacio');
   });
   document.querySelectorAll('select').forEach(e => { e.selectedIndex = 0; e.classList.remove('err'); });
-  clearSig('canvasTecnico','sig-wrap-tec','sig-status-tec','firmaTecSigned');
-  clearSig('canvasCliente','sig-wrap-cli','sig-status-cli','firmaCliSigned');
+  clearSig('canvasTecnico','sig-wrap-tec','sig-status-tec','tec');
+  clearSig('canvasCliente','sig-wrap-cli','sig-status-cli','cli');
   fotoBase64 = null;
   document.getElementById('foto-preview').style.display = 'none';
   document.getElementById('upload-zone').classList.remove('has-file');
@@ -1237,8 +1244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.classList.add('vacio');
   });
 
-  initCanvas('canvasTecnico', 'sig-wrap-tec', 'sig-status-tec', 'firmaTecSigned');
-  initCanvas('canvasCliente', 'sig-wrap-cli', 'sig-status-cli', 'firmaCliSigned');
+  initCanvas('canvasTecnico', 'sig-wrap-tec', 'sig-status-tec', 'tec');
+  initCanvas('canvasCliente', 'sig-wrap-cli', 'sig-status-cli', 'cli');
 
   // ── LEER id_op DESDE URL Y CARGAR AUTOMÁTICAMENTE ──
   const params = new URLSearchParams(window.location.search);
