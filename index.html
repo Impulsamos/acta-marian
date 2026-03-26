@@ -240,6 +240,7 @@ input[type=email], select, textarea {
   transition: var(--ease);
   outline: none;
   -webkit-appearance: none;
+  autocomplete: off;
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--orange);
@@ -250,13 +251,34 @@ input.err, select.err, textarea.err {
   border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(220,38,38,.08);
 }
-input.prefilled {
-  background: var(--green-l);
-  border-color: rgba(22,163,74,.4);
+/* ── CAMPOS SOLO LECTURA ─────────────────────── */
+.display-field {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--g200);
+  border-radius: 7px;
+  font-family: var(--font);
+  font-size: 13px;
   color: var(--g800);
-  cursor: not-allowed;
-  pointer-events: none;
+  background: var(--green-l);
+  border-color: rgba(22,163,74,.35);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
   user-select: none;
+  cursor: default;
+}
+.display-field.vacio {
+  color: var(--g400);
+  background: var(--g100);
+  border-color: var(--g200);
+  font-style: italic;
+}
+.readonly-field {
+  background: var(--green-l) !important;
+  border-color: rgba(22,163,74,.35) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
 }
 textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
 select {
@@ -499,49 +521,37 @@ canvas.sig-canvas {
         <span id="preload-msg">Ingresa el ID de Oportunidad para cargar los datos del asegurado automáticamente.</span>
       </div>
 
-      <!-- ID OP -->
+      <!-- ID OP — Precargado desde URL ?id_op=XXX -->
       <div class="g1">
         <div class="field">
-          <label for="id_op">ID Oportunidad <span class="req">*</span></label>
-          <input type="number" id="id_op" placeholder="Ej: 183" min="1" required
-                 oninput="onIdOpChange()" onblur="cargarDesdeOdoo()">
+          <label for="id_op">ID Oportunidad</label>
+          <input type="number" id="id_op" placeholder="Cargando…" class="readonly-field" readonly autocomplete="off">
           <span class="tech">→ crm.lead.id</span>
-          <span class="ferr" id="ferr-id_op">Campo obligatorio — debe ser un número válido</span>
+          <span class="ferr" id="ferr-id_op">ID de oportunidad no recibido en la URL</span>
         </div>
       </div>
 
-      <!-- NOMBRE + DNI -->
+      <!-- DATOS SOLO LECTURA cargados desde Odoo -->
       <div class="g2">
         <div class="field">
-          <label for="nombre_asegurado">Nombre del Asegurado <span class="req">*</span></label>
-          <input type="text" id="nombre_asegurado" placeholder="Juan García López" required>
-          <span class="tech">→ partner_id (res.partner.name)</span>
-          <span class="ferr" id="ferr-nombre_asegurado">Campo obligatorio</span>
+          <label>Nombre del Asegurado</label>
+          <div class="display-field" id="nombre_asegurado">&#8212;</div>
         </div>
         <div class="field">
-          <label for="dni">DNI / NIF <span class="req">*</span></label>
-          <input type="text" id="dni" placeholder="12345678X" maxlength="20" required>
-          <span class="tech">→ x_studio_dninif_del_asegurado_1</span>
-          <span class="ferr" id="ferr-dni">Campo obligatorio</span>
+          <label>DNI / NIF</label>
+          <div class="display-field" id="dni">&#8212;</div>
         </div>
       </div>
-
-      <!-- TELÉFONO + DOMICILIO -->
       <div class="g1">
         <div class="field">
-          <label for="domicilio">Domicilio del Asegurado <span class="req">*</span></label>
-          <input type="text" id="domicilio" placeholder="Calle Mayor 12, 3ºB, 28013 Madrid" required>
-          <span class="tech">→ x_studio_domicilio_asegurado</span>
-          <span class="ferr" id="ferr-domicilio">Campo obligatorio</span>
+          <label>Domicilio del Asegurado</label>
+          <div class="display-field" id="domicilio">&#8212;</div>
         </div>
       </div>
-
       <div class="g1">
         <div class="field">
-          <label for="telefono">Teléfono del Asegurado <span class="req">*</span></label>
-          <input type="tel" id="telefono" placeholder="600 000 000" required>
-          <span class="tech">→ x_studio_telefono_del_asegurado</span>
-          <span class="ferr" id="ferr-telefono">Campo obligatorio</span>
+          <label>Teléfono del Asegurado</label>
+          <div class="display-field" id="telefono">&#8212;</div>
         </div>
       </div>
 
@@ -569,28 +579,13 @@ canvas.sig-canvas {
       <div class="g2">
         <div class="field">
           <label for="electrodomestico">Tipo de Aparato <span class="req">*</span></label>
-          <select id="electrodomestico" required>
-            <option value="">— Seleccionar —</option>
-            <option>Lavadora</option>
-            <option>Secadora</option>
-            <option>Lavavajillas</option>
-            <option>Frigorífico</option>
-            <option>Congelador</option>
-            <option>Horno</option>
-            <option>Microondas</option>
-            <option>Vitrocerámica / Inducción</option>
-            <option>Campana Extractora</option>
-            <option>Aire Acondicionado</option>
-            <option>Caldera</option>
-            <option>Televisor</option>
-            <option>Otro</option>
-          </select>
+          <input type="text" id="electrodomestico" placeholder="Ej: Lavadora, Frigorífico, Horno…" autocomplete="off">
           <span class="tech">→ x_studio_electrodomstico</span>
           <span class="ferr" id="ferr-electrodomestico">Campo obligatorio</span>
         </div>
         <div class="field">
           <label for="marca">Marca <span class="req">*</span></label>
-          <input type="text" id="marca" placeholder="Bosch, Samsung…" required>
+          <input type="text" id="marca" placeholder="Bosch, Samsung…">
           <span class="tech">→ x_studio_marca</span>
           <span class="ferr" id="ferr-marca">Campo obligatorio</span>
         </div>
@@ -599,7 +594,7 @@ canvas.sig-canvas {
       <div class="g3">
         <div class="field">
           <label for="modelo">Modelo <span class="req">*</span></label>
-          <input type="text" id="modelo" placeholder="WAE24367ES" required>
+          <input type="text" id="modelo" placeholder="WAE24367ES">
           <span class="tech">→ x_studio_modelo</span>
           <span class="ferr" id="ferr-modelo">Campo obligatorio</span>
         </div>
@@ -620,7 +615,7 @@ canvas.sig-canvas {
       <div class="g2">
         <div class="field">
           <label for="averia">Tipo de Avería <span class="req">*</span></label>
-          <select id="averia" required onchange="toggleOtros()">
+          <select id="averia"  onchange="toggleOtros()">
             <option value="">— Seleccionar —</option>
             <option>No enciende</option>
             <option>No centrifuga</option>
@@ -646,7 +641,7 @@ canvas.sig-canvas {
       <div class="g1">
         <div class="field">
           <label for="diagnostico">Diagnóstico Técnico <span class="req">*</span></label>
-          <textarea id="diagnostico" placeholder="Describe el diagnóstico técnico realizado durante la visita…" required></textarea>
+          <textarea id="diagnostico" placeholder="Describe el diagnóstico técnico realizado durante la visita…"></textarea>
           <span class="tech">→ x_studio_diagnstico_tcnico</span>
           <span class="ferr" id="ferr-diagnostico">Campo obligatorio</span>
         </div>
@@ -682,17 +677,17 @@ canvas.sig-canvas {
     </div>
     <div class="panel-body">
 
-      <!-- TÉCNICO -->
+      <!-- TÉCNICO — Solo lectura, precargado desde Odoo -->
       <div class="g2">
         <div class="field">
           <label for="tecnico">Nombre del Técnico <span class="req">*</span></label>
-          <input type="text" id="tecnico" placeholder="Pedro Martínez" required>
+          <input type="text" id="tecnico" placeholder="Cargando desde Odoo…" class="readonly-field" readonly autocomplete="off">
           <span class="tech">→ x_studio_tecnico_visita</span>
           <span class="ferr" id="ferr-tecnico">Campo obligatorio</span>
         </div>
         <div class="field">
           <label for="email_tecnico">Email del Técnico <span class="req">*</span></label>
-          <input type="email" id="email_tecnico" placeholder="tecnico@marian.com" required>
+          <input type="email" id="email_tecnico" placeholder="Cargando desde Odoo…" class="readonly-field" readonly autocomplete="off">
           <span class="tech">→ x_studio_tecnico_email</span>
           <span class="ferr" id="ferr-email_tecnico">Campo obligatorio</span>
         </div>
@@ -848,21 +843,19 @@ async function cargarDesdeOdoo() {
     // Poblar campos si vienen datos
     let cargados = 0;
 
-    if (data.nombre_asegurado) {
-      setField('nombre_asegurado', data.nombre_asegurado); cargados++;
-    }
-    if (data.dni) {
-      setField('dni', data.dni); cargados++;
-    }
-    if (data.telefono) {
-      setField('telefono', data.telefono); cargados++;
-    }
-    if (data.domicilio) {
-      setField('domicilio', data.domicilio); cargados++;
-    }
+    if (data.nombre_asegurado) { setField('nombre_asegurado', data.nombre_asegurado); cargados++; }
+    if (data.dni)              { setField('dni',  data.dni);              cargados++; }
+    if (data.telefono)         { setField('telefono', data.telefono);     cargados++; }
+    if (data.domicilio)        { setField('domicilio', data.domicilio);   cargados++; }
+    if (data.tecnico)          { setField('tecnico', data.tecnico);       cargados++; }
+    if (data.email_tecnico)    { setField('email_tecnico', data.email_tecnico); cargados++; }
 
     if (cargados > 0) {
       setPreload('ok', `✓ ${cargados} campo(s) cargado(s) desde Odoo — Lead #${idOp}`);
+      // Bloquear id_op una vez cargado
+      const idEl = document.getElementById('id_op');
+      idEl.setAttribute('readonly', true);
+      idEl.classList.add('readonly-field');
     } else {
       setPreload('err', `Lead #${idOp} encontrado pero sin datos precargables. Completa manualmente.`);
     }
@@ -877,9 +870,15 @@ async function cargarDesdeOdoo() {
 function setField(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.value = val;
-  el.classList.add('prefilled');
-  el.setAttribute('readonly', true);
+  if (el.tagName === 'DIV') {
+    el.textContent = val;
+    el.classList.remove('vacio');
+    el.dataset.value = val;
+  } else {
+    el.value = val;
+    el.setAttribute('readonly', true);
+    el.classList.add('readonly-field');
+  }
 }
 
 function setPreload(state, msg) {
@@ -932,20 +931,28 @@ function validar(step) {
   document.querySelectorAll('input,select,textarea').forEach(e => e.classList.remove('err'));
 
   const req = {
-    1: ['id_op', 'nombre_asegurado', 'dni', 'telefono', 'domicilio'],
+    1: ['nombre_asegurado', 'dni', 'telefono', 'domicilio'],
     2: ['electrodomestico', 'marca', 'modelo', 'averia', 'diagnostico'],
     3: ['tecnico', 'email_tecnico']
   };
 
-  (req[step] || []).forEach(id => {
+  // Helper local para validación
+  function getValLocal(id) {
     const el = document.getElementById(id);
-    if (!el || !el.value.trim()) {
-      if (el) el.classList.add('err');
+    if (!el) return '';
+    return el.tagName === 'DIV' ? (el.dataset.value || el.textContent || '').trim() : el.value.trim();
+  }
+
+  (req[step] || []).forEach(id => {
+    const val = getValLocal(id);
+    const el = document.getElementById(id);
+    if (!val || val === '—') {
+      if (el && el.tagName !== 'DIV') el.classList.add('err');
       const fe = document.getElementById('ferr-' + id);
       if (fe) fe.classList.add('show');
       ok = false;
     } else {
-      if (el) el.classList.remove('err');
+      if (el && el.tagName !== 'DIV') el.classList.remove('err');
     }
   });
 
@@ -1096,34 +1103,40 @@ async function enviar() {
   btn.disabled = true;
   document.getElementById('overlay').classList.add('show');
 
+  // Helper — lee tanto inputs como display-field divs
+  function getVal(id) {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    return el.tagName === 'DIV' ? (el.dataset.value || el.textContent || '') : el.value.trim();
+  }
+
   let payload;
   try {
     payload = {
-      // Sección 1 — campo enviado como "id_op" hacia normalize-data
+      // Sección 1 — solo lectura desde Odoo
       id_op:            parseInt(document.getElementById('id_op').value.trim()),
       id:               parseInt(document.getElementById('id_op').value.trim()),
-      nombre_asegurado: document.getElementById('nombre_asegurado').value.trim(),
-      dni:              document.getElementById('dni').value.trim().toUpperCase(),
-      telefono:         document.getElementById('telefono').value.trim(),
-      domicilio:        document.getElementById('domicilio').value.trim(),
-      // Sección 2
-      electrodomestico: document.getElementById('electrodomestico').value,
-      marca:            document.getElementById('marca').value.trim(),
-      modelo:           document.getElementById('modelo').value.trim(),
-      serie:            document.getElementById('serie').value.trim(),
-      antiguedad:       document.getElementById('antiguedad').value.trim(),
-      averia:           document.getElementById('averia').value,
-      averia_otros:     document.getElementById('averia_otros').value.trim(),
-      diagnostico:      document.getElementById('diagnostico').value.trim(),
-      observaciones:    document.getElementById('observaciones').value.trim(),
-      // Sección 3
-      tecnico:          document.getElementById('tecnico').value.trim(),
-      email_tecnico:    document.getElementById('email_tecnico').value.trim(),
-      // Binarios — base64 puro sin prefijo
+      nombre_asegurado: getVal('nombre_asegurado'),
+      dni:              getVal('dni').toUpperCase(),
+      telefono:         getVal('telefono'),
+      domicilio:        getVal('domicilio'),
+      // Sección 2 — ingresado por el usuario
+      electrodomestico: getVal('electrodomestico'),
+      marca:            getVal('marca'),
+      modelo:           getVal('modelo'),
+      serie:            getVal('serie'),
+      antiguedad:       getVal('antiguedad'),
+      averia:           getVal('averia'),
+      averia_otros:     getVal('averia_otros'),
+      diagnostico:      getVal('diagnostico'),
+      observaciones:    getVal('observaciones'),
+      // Sección 3 — solo lectura desde Odoo
+      tecnico:          getVal('tecnico'),
+      email_tecnico:    getVal('email_tecnico'),
+      // Binarios — base64 puro
       x_studio_firma_tecnico: getB64('canvasTecnico'),
       x_studio_firma_cliente: getB64('canvasCliente'),
       x_studio_foto_avera:    fotoBase64 || null,
-      // Meta
       fecha_visita: new Date().toISOString().slice(0,19).replace('T',' ')
     };
   } catch (e) {
@@ -1179,7 +1192,17 @@ function mostrarExito(p) {
 }
 
 function nuevaVisita() {
-  document.querySelectorAll('input,textarea').forEach(e => { e.value = ''; e.classList.remove('err','prefilled'); });
+  document.querySelectorAll('input,textarea').forEach(e => {
+    e.value = '';
+    e.classList.remove('err', 'prefilled', 'readonly-field');
+    e.removeAttribute('readonly');
+  });
+  // Reset display-field divs
+  document.querySelectorAll('.display-field').forEach(e => {
+    e.textContent = '—';
+    e.dataset.value = '';
+    e.classList.add('vacio');
+  });
   document.querySelectorAll('select').forEach(e => { e.selectedIndex = 0; e.classList.remove('err'); });
   clearSig('canvasTecnico','sig-wrap-tec','sig-status-tec','firmaTecSigned');
   clearSig('canvasCliente','sig-wrap-cli','sig-status-cli','firmaCliSigned');
@@ -1210,8 +1233,34 @@ function toast(msg, type='') {
    INIT
 ═══════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  // Desactivar autocompletado del navegador en todos los campos
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.setAttribute('autocomplete', 'off');
+  });
+
+  // Inicializar display-field como vacíos
+  document.querySelectorAll('.display-field').forEach(e => {
+    e.textContent = '—';
+    e.classList.add('vacio');
+  });
+
   initCanvas('canvasTecnico', 'sig-wrap-tec', 'sig-status-tec', 'firmaTecSigned');
   initCanvas('canvasCliente', 'sig-wrap-cli', 'sig-status-cli', 'firmaCliSigned');
+
+  // ── LEER id_op DESDE URL Y CARGAR AUTOMÁTICAMENTE ──
+  const params = new URLSearchParams(window.location.search);
+  const idOpUrl = parseInt(params.get('id_op') || 0);
+
+  if (idOpUrl > 0) {
+    const idEl = document.getElementById('id_op');
+    idEl.value = idOpUrl;
+    idEl.setAttribute('readonly', true);
+    idEl.classList.add('readonly-field');
+    cargarDesdeOdoo();
+  } else {
+    setPreload('err', '⚠️ No se recibió ID de Oportunidad en la URL. Contacta al administrador.');
+  }
+
   console.log('[Electrónicos Marian] Acta v3.0 — Listo');
   console.log('[WEBHOOK POST]', CFG.WEBHOOK_POST);
   console.log('[WEBHOOK GET]',  CFG.WEBHOOK_GET);
