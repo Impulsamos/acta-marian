@@ -1095,8 +1095,9 @@ async function enviar() {
   let payload;
   try {
     payload = {
-      // Sección 1
+      // Sección 1 — campo enviado como "id_op" hacia normalize-data
       id_op:            parseInt(document.getElementById('id_op').value.trim()),
+      id:               parseInt(document.getElementById('id_op').value.trim()),
       nombre_asegurado: document.getElementById('nombre_asegurado').value.trim(),
       dni:              document.getElementById('dni').value.trim().toUpperCase(),
       telefono:         document.getElementById('telefono').value.trim(),
