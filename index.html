@@ -225,7 +225,7 @@ body { font-family: var(--font); background: var(--navy); min-height: 100vh; col
   display: flex; align-items: center; gap: 4px;
 }
 .req { color: var(--orange); font-size: 14px; line-height: 1; }
-.tech { font-family: var(--mono); font-size: 9px; color: var(--orange); opacity: .7; margin-top: 1px; }
+.tech { display: none; }
 
 input[type=text], input[type=number], input[type=tel],
 input[type=email], select, textarea {
@@ -254,6 +254,9 @@ input.prefilled {
   background: var(--green-l);
   border-color: rgba(22,163,74,.4);
   color: var(--g800);
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
 }
 textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
 select {
@@ -876,6 +879,7 @@ function setField(id, val) {
   if (!el) return;
   el.value = val;
   el.classList.add('prefilled');
+  el.setAttribute('readonly', true);
 }
 
 function setPreload(state, msg) {
@@ -940,6 +944,8 @@ function validar(step) {
       const fe = document.getElementById('ferr-' + id);
       if (fe) fe.classList.add('show');
       ok = false;
+    } else {
+      if (el) el.classList.remove('err');
     }
   });
 
@@ -957,13 +963,11 @@ function validar(step) {
       document.getElementById('ferr-foto').classList.add('show');
       ok = false;
     }
-    if (!firmaTecSigned || canvasVacio('canvasTecnico')) {
-      firmaTecSigned = false;
+    if (!firmaTecSigned) {
       document.getElementById('ferr-firma-tec').classList.add('show');
       ok = false;
     }
-    if (!firmaCliSigned || canvasVacio('canvasCliente')) {
-      firmaCliSigned = false;
+    if (!firmaCliSigned) {
       document.getElementById('ferr-firma-cli').classList.add('show');
       ok = false;
     }
